@@ -9,6 +9,10 @@
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="MessagePack" Version="1.7.3.4" />
     <PackageReference Include="ShellProgressBar" Version="4.0.0" />

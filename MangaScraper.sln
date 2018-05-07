@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaScraper.Core", "Core\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaScraper.UI", "MangaScraper.UI\MangaScraper.UI.csproj", "{8B8FC132-9404-470F-847D-2701DB08C99B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaScraper.Application", "MangaScraper.Application\MangaScraper.Application.csproj", "{EDA75462-490E-4C0B-BBC4-EC6D59E128B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaScraper.Application", "MangaScraper.Application\MangaScraper.Application.csproj", "{EDA75462-490E-4C0B-BBC4-EC6D59E128B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WixSharpInstaller", "WixSharpInstaller\WixSharpInstaller.csproj", "{44555887-C439-470C-944D-8866EC3D7067}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,22 @@ Global
 		{EDA75462-490E-4C0B-BBC4-EC6D59E128B0}.Release|x64.Build.0 = Release|Any CPU
 		{EDA75462-490E-4C0B-BBC4-EC6D59E128B0}.Release|x86.ActiveCfg = Release|Any CPU
 		{EDA75462-490E-4C0B-BBC4-EC6D59E128B0}.Release|x86.Build.0 = Release|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Debug|ARM.Build.0 = Debug|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Debug|x64.Build.0 = Debug|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Debug|x86.Build.0 = Debug|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Release|ARM.ActiveCfg = Release|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Release|ARM.Build.0 = Release|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Release|x64.ActiveCfg = Release|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Release|x64.Build.0 = Release|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Release|x86.ActiveCfg = Release|Any CPU
+		{44555887-C439-470C-944D-8866EC3D7067}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
