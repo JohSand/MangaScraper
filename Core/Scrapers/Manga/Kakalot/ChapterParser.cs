@@ -14,8 +14,10 @@ namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
       var doc = await getPage(Url);
       return doc
         .GetElementById("vungdoc")
-        .Children.Skip(pageNumber - 1)
-        .First(c => c.LocalName == "img")
+        .Children
+        .Where(c => c.LocalName == "img")
+        .Skip(pageNumber - 1)
+        .First()
         .GetAttribute("src");
     }
 

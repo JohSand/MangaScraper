@@ -106,21 +106,20 @@ namespace MangaScraper.Core.Scrapers.Manga {
       Console.WriteLine("");
       IFileSystem sys = new FileSystem();
       var fox = new Kakalot.SeriesParser();
+      var mgr = new MangaDownloader(null, new List<ISeriesParser>());
+      var getter = mgr.PageGetter;
 
+      var chapter = fox.CreateChapter("http://mangakakalot.com/chapter/koushaku_reijou_no_tashinami/chapter_16");
+
+      var nrPages = await chapter.GetPageCount(getter);
+      var p1 = await chapter.GetImageUrl(6, getter);
+      var p2 = await chapter.GetImageUrl(7, getter);
+      var p3 = await chapter.GetImageUrl(19, getter);
       var mrg = new MangaDownloader(sys, new List<ISeriesParser> { fox });
 
-      List<(string name, string url)> mangas;
-      using (var pb = new ConsoleProgress(options)) {
-        mangas = await mrg.ListInstances(fox.ProviderName, pb).ToListAsync();
-      }
 
-
-      Console.WriteLine(mangas.Count);
-      var (_, url) = mangas.Skip(8).First();
-      var chapters = await mrg.ChapterParsers(fox.ProviderName, url).ToListAsync();
-      var someChapter = chapters.First();
       using (var pb = new ConsoleProgress(options)) {
-        await mrg.DownloadChapterTo(someChapter, @"C:\Pile\Test", pb);
+        await mrg.DownloadChapterTo(chapter, @"C:\Pile\Test", pb);
       }
     }
 

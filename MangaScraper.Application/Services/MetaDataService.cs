@@ -35,7 +35,7 @@ namespace MangaScraper.Application.Services {
 
     public string Path { get; }
 
-    public async Task<(string, MetaData)[]> GetMetaData() {
+    public async Task<(string name, MetaData metaData)[]> GetMetaData() {
       using (_lock.LockAsync()) {
         return await ReadFromDisk();
       }
@@ -64,8 +64,17 @@ namespace MangaScraper.Application.Services {
 
     private async Task<(string, MetaData)[]> DownloadMetaData(IProgress<double> progress = null) {
       var instances = await MetaDataParser.ListInstances(PageGetter, progress);
+      var throttle = instances.Select((a, i) => (item: a, index: i))
+        .GroupBy(t => t.index / 20)
+        .Select(g => g.Select(x => x.item))
+        .ToList();
 
-      return await Task.WhenAll(instances.Select(GetMetaData));
+      List< (string, MetaData) > thing = new List<(string, MetaData)>();
+      foreach (var list in throttle) {
+        thing.AddRange(await Task.WhenAll(list.Select(GetMetaData)));
+      }
+      return thing.ToArray();
+      //return await Task.WhenAll(instances.Select(GetMetaData));
     }
 
     public async Task<(string, MetaData)> GetMetaData((string name, string url) valueTuple) {
