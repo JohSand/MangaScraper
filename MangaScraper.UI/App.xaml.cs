@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace MangaScraper.UI {
+﻿namespace MangaScraper.UI {
   /// <summary>
   /// Interaction logic for App.xaml
   /// </summary>

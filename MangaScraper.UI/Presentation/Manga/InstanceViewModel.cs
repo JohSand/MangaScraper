@@ -1,10 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 using Caliburn.Micro;
-using MangaScraper.Application.Services;
 using MangaScraper.Core.Scrapers;
-using MangaScraper.UI.Helpers;
 
 namespace MangaScraper.UI.Presentation.Manga {
   public class InstanceViewModel : PropertyChangedBase {

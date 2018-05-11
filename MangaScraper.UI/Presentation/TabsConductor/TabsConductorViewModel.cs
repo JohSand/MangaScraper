@@ -12,7 +12,17 @@ namespace MangaScraper.UI.Presentation.TabsConductor {
     //    DisplayName = "Tab "
     //  });
     //}
+    protected override void OnActivate() {
+      base.OnActivate();
 
+    }
+    public override void ActivateItem(IScreen s) {
+      base.ActivateItem(s);
+      s.Activate();
+    }
+    protected override void OnDeactivate(bool close) {
+      base.OnDeactivate(close);
+    }
     public bool IsCloseButtonVisible { get; set; }
 
     public void CloseItem(IScreen screen) { DeactivateItem(screen, true); }

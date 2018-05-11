@@ -6,9 +6,11 @@
              xmlns:local="clr-namespace:MangaScraper.UI.Presentation.Hello"
              mc:Ignorable="d" 
             >
-  <StackPanel Orientation="Horizontal">
+  <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
     <TextBlock Text="This is the view for "/>
     <TextBlock x:Name="DisplayName" />
     <TextBlock Text="." />
+    <TextBlock x:Name="Context" Width="300px"/>
+    <ProgressBar Width="300px" Value="{Binding Path=Progress}" Maximum="1"></ProgressBar>
   </StackPanel>
 </UserControl>

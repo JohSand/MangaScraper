@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using MangaScraper.Application.Services;
 using MangaScraper.Core.Helpers;
-using MangaScraper.UI.Presentation.Manga;
 using static System.Math;
 
 namespace MangaScraper.UI.Helpers {

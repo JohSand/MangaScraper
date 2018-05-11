@@ -32,9 +32,9 @@ namespace MangaScraper.Core.Scrapers {
     SciFi         = 1L << 22,
     Seinen        = 1L << 23,
     Shoujo        = 1L << 24,
-    Shoujoai      = 1L << 25,
+    ShoujoAi      = 1L << 25,
     Shounen       = 1L << 26,
-    Shounenai     = 1L << 27,
+    ShounenAi     = 1L << 27,
     SliceOfLife   = 1L << 28,
     Smut          = 1L << 29,
     Sports        = 1L << 30,
@@ -43,7 +43,9 @@ namespace MangaScraper.Core.Scrapers {
     Tragedy       = 1L << 33,
     Vampire       = 1L << 34,
     Yaoi          = 1L << 35,
-    Yuri          = 1L << 36
+    Yuri          = 1L << 36,
+    Adult         = 1L << 37,
+
   }
 
   public static class GenreExtensions {
@@ -59,6 +61,7 @@ namespace MangaScraper.Core.Scrapers {
         if (multiWordEnum.Length > 1) {
           dict.Add(string.Join(" ", multiWordEnum), genre);
           dict.Add(string.Join("-", multiWordEnum), genre);
+          dict.Add(string.Join(" ", multiWordEnum.Select((s, i) => i == 0 ? s : s.ToLower())), genre);
         }
       }
       return dict;
@@ -74,7 +77,7 @@ namespace MangaScraper.Core.Scrapers {
 
     public static Genre ParseAsGenre(this string genre) => Translations.ContainsKey(genre) ? Translations[genre] : Genre.None;
 
-    public static Genre Merge(this IEnumerable<Genre> genres) => genres.Aggregate((a, c) => a | c);
+    public static Genre Merge(this IEnumerable<Genre> genres) => genres.Aggregate(Genre.None, (a, c) => a | c);
 
     public static IEnumerable<Genre> Split(this Genre genre) =>
       Enum.GetValues(typeof(Genre))

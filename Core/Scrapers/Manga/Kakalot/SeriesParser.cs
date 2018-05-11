@@ -6,8 +6,22 @@ using AngleSharp.Dom.Html;
 using MangaScraper.Core.Helpers;
 
 namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
-  public struct SeriesParser : ISeriesParser {
+  public struct SeriesParser : ISeriesParser, IMetaDataParser {
     public string ProviderName => "MangaKakalot";
+
+    public MetaData GetMetaData(IHtmlDocument doc) {
+      var info = doc.GetElementsByClassName("manga-info-text").First();
+      var li = info.Elements("li").ToList();
+      var author = li[1];
+      var genres = li[6];
+      var strings = genres.Elements("a").Select(e =>  e.TextContent.ParseAsGenre()).Merge();
+
+      return new MetaData {
+        Genres = strings
+      };
+    }
+
+
 
     public async Task<IEnumerable<(string name, string url)>> ListInstances(PageGetter pageGetter, IProgress<double> progress = null) {
       var doc = await pageGetter("http://mangakakalot.com/manga_list?type=topview&category=all&state=all&page=1");

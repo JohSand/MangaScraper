@@ -7,7 +7,6 @@ using Autofac;
 using MangaScraper.Application.Services;
 using MangaScraper.Core.Scrapers.Manga;
 using MangaScraper.UI.Composition;
-using MangaScraper.UI.Presentation.Manga;
 using MangaScraper.UI.Presentation.Shell;
 
 namespace MangaScraper.UI.Bootstrap {
@@ -32,10 +31,10 @@ namespace MangaScraper.UI.Bootstrap {
       builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser()).AsImplementedInterfaces();
       builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Panda.SeriesParser()).AsImplementedInterfaces();
       builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Fun.SeriesParser()).AsImplementedInterfaces();
-      builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser()).AsImplementedInterfaces();
+      builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser()).As<ISeriesParser>();
       //builder.RegisterType<FoxScraper>().AsImplementedInterfaces();
       //builder.RegisterType<MangaFoxProvider>().AsImplementedInterfaces().SingleInstance();
-      //todo register viewmodel by convention
+      //todo register parser by convention
       builder.RegisterType<FileSystem>().AsImplementedInterfaces().SingleInstance();
       builder.RegisterType<MangaDownloader>().AsImplementedInterfaces().SingleInstance();
       builder.RegisterType<MangaIndex>().AsImplementedInterfaces().SingleInstance();
@@ -56,7 +55,8 @@ namespace MangaScraper.UI.Bootstrap {
     }
 
     protected override void OnExit(object sender, EventArgs e) {
-      //var asd = Container.Resolve<IShellView>();
+      var asd = Container.Resolve<IMangaIndex>();
+      asd.Stop();
       base.OnExit(sender, e);
     }
   }

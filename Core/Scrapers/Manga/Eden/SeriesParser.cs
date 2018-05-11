@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,22 +16,24 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
       };
       var rating = doc.GetElementById("rating");
       var author = rating.GetNextSiblingWithText("Author");
-      metaData.Author = author.NextElementSibling.TextContent;
+      metaData.Author = author?.NextElementSibling?.TextContent;
 
-      var artist = author.GetNextSiblingWithText("Artist");
-      metaData.Artist = artist.NextElementSibling.TextContent;
-      var genres = artist.GetNextSiblingWithText("Genres");
+      var artist = (author ?? rating).GetNextSiblingWithText("Artist");
+      metaData.Artist = artist?.NextElementSibling?.TextContent;
+
+      var genres = (artist ?? rating).GetNextSiblingWithText("Genres");
       metaData.Genres = GetGenreATags(genres)
         .Select(e => e.TextContent)
-        .Select(t =>t.ParseAsGenre())
+        .Select(t => t.ParseAsGenre())
         .Where(t => t != Genre.None)
         .Merge();
-        return metaData;
+      return metaData;
     }
 
     private IEnumerable<IElement> GetGenreATags(IElement genreTag) {
+      if(genreTag == null) yield break;
       var next = genreTag.NextElementSibling;
-      while (next.TextContent != "Type") {
+      while (next != null && next.TextContent != "Type") {
         if (next.LocalName == "a")
           yield return next;
         next = next.NextElementSibling;
@@ -58,7 +59,8 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
       var page = await doc(url);
       return page
         .GetElementById("mangaList")
-        .GetElementsByTagName("tbody").First()
+        .GetElementsByTagName("tbody")
+        .First()
         .Elements("tr")
         .Select(tr => tr.Element("td").Element("a"))
         .Select(a => (a.TextContent, $"https://www.mangaeden.com{a.GetAttribute("href")}"));

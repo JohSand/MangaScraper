@@ -13,8 +13,12 @@ namespace MangaScraper.Application.Services {
     private readonly IMangaDownloader _manager;
     private readonly IMetaDataService _metaDataService;
     private readonly IMemCache _memCache;
+    private readonly CancellationTokenSource _source = new CancellationTokenSource();
+    private readonly Task _task;
 
     private AsyncLazy<MangaInfo[]> MyDictionary { get; set; }
+
+
 
     public MangaIndex(IMangaDownloader manager, IMetaDataService metaDataService, IMemCache memCache) {
       _manager = manager;
@@ -22,16 +26,16 @@ namespace MangaScraper.Application.Services {
       _memCache = memCache;
       MyDictionary = new AsyncLazy<MangaInfo[]>(CreateDictionary);
       //todo
-      // _metaDataService.Start(CancellationToken.None);
+      _task = _metaDataService.Start(_source.Token);
     }
 
     private async Task<MangaInfo[]> CreateDictionary() {
-      var res2 = await _memCache.GetAsync();
+      var mangaData = await _memCache.GetAsync();
       var metaData = await _metaDataService.GetMetaData();
       var metaDataDict = metaData.Where(m => !string.IsNullOrEmpty(m.name)).GroupBy(m => m.name).ToDictionary(m => m.Key, x => x.First().metaData);
 
 
-      var dict = res2//
+      var dict = mangaData//
            .GroupBy(t => t.name, t => (t.provider, t.url))
            .Select(g => new MangaInfo {
              Name = g.Key,
@@ -63,14 +67,28 @@ namespace MangaScraper.Application.Services {
     }
 
     public async Task Update() {
-      var result = await Task.WhenAll(_manager.Providers.Select(p => _manager.ListInstances(p).ContinueWith(t => (t.Result, provider: p))));
-      var group = result.AsParallel().SelectMany(q => q.Result, (x, t) => (x.provider, t.name, t.url));
+      var result = await _manager.Providers
+        .Select(GetProviderData)
+        .WhenAll();
+      var group = result.AsParallel().SelectMany(q => q.data, (x, t) => (x.provider, t.name, t.url));
       await _memCache.WriteToDisk(group);
 
       MyDictionary = new AsyncLazy<MangaInfo[]>(CreateDictionary);
 
 
       //todo create index, store to disk, etc
+    }
+
+    public void Stop() {
+      _source.Cancel();
+      try {
+        _task.GetAwaiter().GetResult();
+      }
+      catch (Exception e) when(e is OperationCanceledException) { }
+    }
+
+    private Task<(IEnumerable<(string name, string url)> data, string provider)> GetProviderData(string p) {
+      return _manager.ListInstances(p).ContinueWith(t => (t.Result, p));
     }
 
 

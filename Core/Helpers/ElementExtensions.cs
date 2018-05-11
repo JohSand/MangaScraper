@@ -12,8 +12,8 @@ namespace MangaScraper.Core.Helpers {
     }
 
     public static IElement GetNextSiblingWithText(this IElement e, string text) {
-      var next = e.NextElementSibling;
-      while (next.TextContent != text) {
+      var next = e?.NextElementSibling;
+      while (next != null && next.TextContent != text) {
         next = next.NextElementSibling;
       }
       return next;

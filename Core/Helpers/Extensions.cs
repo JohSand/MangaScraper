@@ -24,8 +24,10 @@ namespace MangaScraper.Core.Helpers {
       return all.SelectMany(t => t);
     }
 
-    public static async Task<List<T>> ToListAsync<T>(this Task<IEnumerable<T>> source) =>
-      (await source.ConfigureAwait(false)).ToList();
+    public static async Task<List<T>> ToListAsync<T>(this Task<IEnumerable<T>> source) {
+      var result = await source.ConfigureAwait(false);
+      return result is List<T> l ? l : result.ToList();
+    }
 
     public static async Task<T[]> ToArrayAsync<T>(this Task<IEnumerable<T>> source) =>
       (await source.ConfigureAwait(false)).ToArray();
