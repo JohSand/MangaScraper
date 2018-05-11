@@ -8,7 +8,8 @@ namespace MangaScraper.Application.Services {
   public interface IMangaIndex {
     Task<IEnumerable<MangaInfo>> FindMangas(Genre genres);
     Task<IEnumerable<MangaInfo>> FindMangas(string name);
-    Task Update();
+    IReadOnlyCollection<string> Providers { get; }
+    Task Update(GetProgress factory);
     void Stop();
     Task<string> GetCoverUrl(string provider, string url);
     Task<IEnumerable<IChapterParser>> Chapters(string provider, string url);

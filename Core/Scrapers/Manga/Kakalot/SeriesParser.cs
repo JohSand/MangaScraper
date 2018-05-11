@@ -28,6 +28,7 @@ namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
       var groupPage = doc.GetElementsByClassName("group-page").First();
       var last = groupPage.Children.Last(c => c.LocalName == "a").TextContent.Replace("Last(", "").Replace(")", "");
       var index = int.Parse(last);
+      //todo this seems heavy...
       return await Enumerable.Range(1, index)
         .Select(i => $"http://mangakakalot.com/manga_list?type=topview&category=all&state=all&page={i}")
         .Select(url => GetForUrl(pageGetter, url))

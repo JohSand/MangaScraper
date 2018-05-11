@@ -11,8 +11,8 @@ namespace MangaScraper.Core.Scrapers.Manga.Panda {
 
     public async Task<IEnumerable<(string name, string url)>> ListInstances(PageGetter pageGetter, IProgress<double> progress = null) {
       var mangaIndex = await pageGetter("http://www.mangapanda.com/alphabetical").ConfigureAwait(false);
-
-      return mangaIndex
+      progress?.Report(0.9);
+      var i = mangaIndex
         .GetElementById("wrapper_body")
         .Element("div") //content_bloc2
         .Elements("div")
@@ -24,6 +24,8 @@ namespace MangaScraper.Core.Scrapers.Manga.Panda {
         .Select(a => (a.TextContent, $"http://www.mangapanda.com{a.GetAttribute("href")}"))
         .Distinct()
         .ToList();
+      progress?.Report(1);
+      return i;
     }
 
     public IEnumerable<string> ChapterUrls(IHtmlDocument doc) {

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using MangaScraper.Application.Services;
 using MangaScraper.Core.Helpers;
 using MangaScraper.Core.Scrapers;
+using MangaScraper.Core.Scrapers.Manga;
 using MangaScraper.UI.Helpers;
 using MangaScraper.UI.Main;
+using MangaScraper.UI.Presentation.Common;
 
 namespace MangaScraper.UI.Presentation.Manga {
   public class SearchViewModel : PropertyChangedBase {
@@ -33,8 +36,9 @@ namespace MangaScraper.UI.Presentation.Manga {
 
     public async void UpdateButton_Click() {
       using (var pb = new ProgressWindow()) {
+        pb.AddStacks(MangaIndex.Providers);
         pb.Show();
-        await MangaIndex.Update();
+        await MangaIndex.Update(pb.GetProgress);
       }
     }
 

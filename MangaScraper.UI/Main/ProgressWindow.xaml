@@ -3,8 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ProgressBarIndeterminateSample"
         xmlns:local="clr-namespace:MangaScraper.UI.Main"
-        Height="100" Width="300">
+        SizeToContent="Height"
+        Height="200" Width="300">
   <Grid Margin="20">
-    <ProgressBar Name="ProgressBar" Maximum="1"/>
+    <ListView x:Name="DataView">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <StackPanel>
+            <Label Content="{Binding Path=Name}" />
+            <ProgressBar Height="20" Width="100" Value="{Binding Path=Progress}" Maximum="1"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
   </Grid>
 </Window>

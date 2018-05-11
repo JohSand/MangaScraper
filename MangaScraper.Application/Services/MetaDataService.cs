@@ -101,7 +101,7 @@ namespace MangaScraper.Application.Services {
       foreach (var list in throttle) {
         token.ThrowIfCancellationRequested();
         thing.AddRange(await Task.WhenAll(list.Select(GetMetaData)));
-        await Task.Delay(200, token);
+        await Task.Delay(1000, token);
         var p = ReportProgressFactory?.Invoke("MetaData");
         p?.Report(step * ii++);
       }

@@ -66,10 +66,17 @@ namespace MangaScraper.Application.Services {
         .ToList();
     }
 
-    public async Task Update() {
-      var result = await _manager.Providers
-        .Select(GetProviderData)
-        .WhenAll();
+    public IReadOnlyCollection<string> Providers => _manager.Providers.ToList();
+
+    public Task Update() => Update(null);
+
+    public async Task Update(GetProgress factory) {
+      var result = new List<(IEnumerable<(string name, string url)> data, string provider)>(_manager.Providers.Count());
+      foreach (var provider in _manager.Providers) {
+        var data = await _manager.ListInstances(provider, factory?.Invoke(provider));
+        result.Add((data, provider));
+      }
+
       var group = result.AsParallel().SelectMany(q => q.data, (x, t) => (x.provider, t.name, t.url));
       await _memCache.WriteToDisk(group);
 
@@ -86,11 +93,6 @@ namespace MangaScraper.Application.Services {
       }
       catch (Exception e) when(e is OperationCanceledException) { }
     }
-
-    private Task<(IEnumerable<(string name, string url)> data, string provider)> GetProviderData(string p) {
-      return _manager.ListInstances(p).ContinueWith(t => (t.Result, p));
-    }
-
 
     public Task<string> GetCoverUrl(string provider, string url) {
       return _manager.CoverUrl(provider, url);
