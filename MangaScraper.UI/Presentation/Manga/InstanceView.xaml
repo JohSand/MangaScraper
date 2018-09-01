@@ -7,47 +7,47 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 
              mc:Ignorable="d">
-  <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="40" />
-      <RowDefinition Height="40" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-    <Label
-      Grid.Row="0"
-      Grid.Column="0"
-      Grid.ColumnSpan="2"
-      x:Name="Name"
-      HorizontalAlignment="Center"
-      Height="40"
-      VerticalAlignment="Center"
-      Foreground="Black"
-      FontSize="14"
-      FontWeight="Heavy"
-      Width="240" />
-    <Image
-      VerticalAlignment="Top"
-      Width="200"
-      x:Name="Cover" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2"/>
-    <TextBlock
-      VerticalAlignment="Top"
-      Width="300"
-      x:Name="Genres" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap"
-      TextAlignment="Left"
-      Margin="10"/>
-    
-    <TextBlock
-      VerticalAlignment="Top"
-      Width="300"
-      x:Name="Blurb" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap"
-      TextAlignment="Left"
-      Margin="10"/>
-    
-    <ContentControl x:Name="ChapterInstanceViewModel"  Grid.Column="2" Grid.Row="1" Grid.RowSpan="2"/>
-  </Grid>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            x:Name="Name"
+            HorizontalAlignment="Center"
+            Height="40"
+            VerticalAlignment="Center"
+            Foreground="White"
+            FontSize="14"
+            FontWeight="Heavy" />
+        <Image
+            VerticalAlignment="Top"
+            Width="200"
+            x:Name="Cover" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" />
+        <TextBlock
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Width="300"
+            x:Name="Genres" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap"
+            TextAlignment="Left"
+            Margin="0,0,0,0" />
+
+        <TextBlock
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Width="300"
+            x:Name="Blurb" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap"
+            TextAlignment="Left"
+            Margin="0,5,5,0" />
+
+        <ContentControl x:Name="ChapterInstanceViewModel" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" />
+    </Grid>
 </UserControl>

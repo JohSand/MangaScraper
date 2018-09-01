@@ -24,7 +24,8 @@
       AutoGenerateColumns="False"
       CanUserAddRows="False"
       IsReadOnly="True"
-      Width="372" Height="300"
+      Width="300" Height="300"
+        HorizontalAlignment="Left"
       SelectionMode="Extended"
       cal:Message.Attach="[Event SelectionChanged] = [SelectedRowsChanged($eventArgs)]">
       <DataGrid.Columns>
@@ -38,12 +39,12 @@
         </DataGridTemplateColumn>
       </DataGrid.Columns>
     </DataGrid>
-    <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
+    <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
                 Orientation="Horizontal">
       <Button Content="Download Selection" Width="140" Height="20" Margin="5"
               cal:Message.Attach="DownloadSelected" />
       <Button Content="Download All" Width="100" Height="20" cal:Message.Attach="DownloadManga_All" />
     </StackPanel>
-    <ContentControl x:Name="MultiProgress" Grid.Row="2" BorderThickness="0" Width="372" />
+    <ContentControl x:Name="MultiProgress" Grid.Row="2" BorderThickness="0" Width="300" />
   </Grid>
 </UserControl>

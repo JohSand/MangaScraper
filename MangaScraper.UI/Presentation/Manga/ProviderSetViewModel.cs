@@ -18,7 +18,7 @@ namespace MangaScraper.UI.Presentation.Manga {
       MetaData = mangaInfo.MetaData;
       this
         .OnPropertyChanges(s => s.SelectedProvider)
-        .Subscribe(async a => await CreateChapterInstanceViewModel(a.Provider, a.Url));
+        .Subscribe(a => CreateChapterInstanceViewModel(a.Provider, a.Url));
     }
 
     private async Task CreateChapterInstanceViewModel(string provider, string url) {

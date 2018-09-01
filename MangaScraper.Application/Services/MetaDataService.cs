@@ -12,6 +12,7 @@ using MessagePack;
 using MessagePack.Resolvers;
 using static System.Environment;
 using static System.IO.Path;
+using static MessagePack.MessagePackSerializer;
 
 namespace MangaScraper.Application.Services {  
   public class MetaDataService : IMetaDataService {
@@ -25,6 +26,10 @@ namespace MangaScraper.Application.Services {
 
       if (!Directory.Exists(DirectoryPath))
         Directory.CreateDirectory(DirectoryPath);
+
+      if (!File.Exists(Path)) {
+        WriteToDisk(new (string, MetaData)[0]).GetAwaiter().GetResult();
+      }
     }
 
     private readonly AsyncLock _lock = new AsyncLock();
@@ -52,15 +57,11 @@ namespace MangaScraper.Application.Services {
 
     public async Task<(string name, MetaData metaData)[]> GetMetaData() {
       using (await _lock.LockAsync()) {
-        return await ReadFromDisk();
+        return await ReadFromDisk().ConfigureAwait(false);
       }
     }
 
-
-    //todo, this is way too agressive, and steals all network resources. Throttle
-    public Task Start(CancellationToken token) => Start(token, null);
-
-    public Task Start(CancellationToken token, GetProgress progress) {
+    public Task Start(CancellationToken token)  {
       var scheduler = new SingleThreadTaskScheduler(ApartmentState.MTA);
 
       async Task EventLoop() {
@@ -69,7 +70,7 @@ namespace MangaScraper.Application.Services {
             var thing = await DownloadMetaData(token);
             token.ThrowIfCancellationRequested();
             using (await _lock.LockAsync()) {
-              await WriteToDisk(thing);
+              await WriteToDisk(thing).ConfigureAwait(false);
             }
             await Task.Delay(10 * 1000, token);
           }
@@ -122,17 +123,17 @@ namespace MangaScraper.Application.Services {
 
 
     private async Task WriteToDisk((string, MetaData)[] msg) {
-      var arr = MessagePackSerializer.Serialize(msg, ContractlessStandardResolver.Instance);
+      var arr = Serialize(msg, ContractlessStandardResolver.Instance);
       using (var mmf = MemoryMappedFile.CreateFromFile(Path, FileMode.Create, null, arr.Length))
       using (var vs = mmf.CreateViewStream()) {
-        await vs.WriteAsync(arr, 0, arr.Length);
+        await vs.WriteAsync(arr, 0, arr.Length).ConfigureAwait(false);
       }
     }
 
     private async Task<(string, MetaData)[]> ReadFromDisk() {
       using (var mmf = MemoryMappedFile.CreateFromFile(Path, FileMode.Open))
       using (var vs = mmf.CreateViewStream()) {
-        return await MessagePackSerializer.DeserializeAsync<(string, MetaData)[]>(vs, ContractlessStandardResolver.Instance);
+        return await DeserializeAsync<(string, MetaData)[]>(vs, ContractlessStandardResolver.Instance).ConfigureAwait(false);
       }
     }
   }
