@@ -8,7 +8,7 @@
       mc:Ignorable="d">
 
   <main1:MultiSelectComboBox Width="140" Height="40" 
-                            ItemsSource="{Binding Path=Items, Mode=TwoWay}"
+                            ItemsSource="{Binding Path=Items}"
                             SelectedItems="{Binding Path=SelectedItems, Mode=TwoWay}"
                             ToolTip="{Binding Path=Text, RelativeSource={RelativeSource Self}}"
                             />

@@ -7,54 +7,64 @@ using Caliburn.Micro;
 using JetBrains.Annotations;
 
 namespace MangaScraper.UI.Presentation.Common {
-  public class MultiProgressViewModel {
-    [UsedImplicitly]
-    public int BatchSize { get; set; } = 3;
+    public class MultiProgressViewModel {
+        [UsedImplicitly]
+        public int BatchSize { get; set; } = 3;
 
-    public Action<string, Exception> ErrorLog { get; set; }
+        public Action<string, Exception> ErrorLog { get; set; }
 
-    [UsedImplicitly]
-    public BindableCollection<ProgressListItem> Items { get; } = new BindableCollection<ProgressListItem>();
+        [UsedImplicitly]
+        public BindableCollection<ProgressListItem> Items { get; } = new BindableCollection<ProgressListItem>();
 
-    public delegate Task UpdateInstruction(IProgress<double> d);
+        public delegate Task AsyncWork(IProgress<double> d);
 
-    public async void ScheduleProgress(IEnumerable<(string, UpdateInstruction)> thingsToDo) {
-      var remainingItems = new Stack<(string, UpdateInstruction)>(thingsToDo);
-      var size = Math.Min(BatchSize, remainingItems.Count);
-      var currentItems = Enumerable.Range(0, size).Select(_ => CreateProgressBar(remainingItems)).ToList();
+        public async void ScheduleProgress(IEnumerable<(string, AsyncWork)> thingsToDo) {
+            var remainingItems = new Stack<(string, AsyncWork)>(thingsToDo);
+            var size = Math.Min(BatchSize, remainingItems.Count);
+            var currentItems = new List<Task<ProgressListItem>>();
+            foreach (var _ in Enumerable.Range(0, size)) {
+                var (name, updateInstruction) = remainingItems.Pop();
+                currentItems.Add(CreateProgressBar(name, updateInstruction));
+            }
 
-      while (currentItems.Any()) {
-        var done = await Task.WhenAny(currentItems);
-        currentItems.Remove(done);
-        var item = await done;
-        Items.Remove(item);
-        if (item.Exception != null)
-          ErrorLog?.Invoke(item.Name, item.Exception);
+            while (currentItems.Any()) {
+                var done = await Task.WhenAny(currentItems);
+                currentItems.Remove(done);
+                var item = await done;
 
-        if (remainingItems.Any() && currentItems.Count < BatchSize)
-          currentItems.Add(CreateProgressBar(remainingItems));
-      }
+                if (item.Exception != null)
+                    ErrorLog?.Invoke(item.Name, item.Exception);
+
+                if (remainingItems.Any() && currentItems.Count < BatchSize) {
+                    var (name, updateInstruction) = remainingItems.Pop();
+                    currentItems.Add(CreateProgressBar(name, updateInstruction));
+                }
+            }
+        }
+
+        private Task<ProgressListItem> CreateProgressBar(string name, AsyncWork work) {
+            var item = new ProgressListItem() {Name = $"Chapter {name}"};
+            Items.Add(item);
+            return work(new Progress<double>(d => item.Progress = d))
+                .ContinueWith(t => {
+                        item.Exception = t.Exception;
+                        Items.Remove(item);
+                        return item;
+                    },
+                    TaskScheduler.FromCurrentSynchronizationContext());
+            //if removed with callback, i need to think about dispatcher threads   
+        }
+
+        public class ProgressListItem : INotifyPropertyChanged {
+            [UsedImplicitly]
+            public string Name { get; set; }
+
+            [UsedImplicitly]
+            public double Progress { get; set; }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            public AggregateException Exception { get; set; }
+        }
     }
-
-    private Task<ProgressListItem> CreateProgressBar(Stack<(string, UpdateInstruction)> stack) {
-      var (name, updateInstruction) = stack.Pop();
-      var item = new ProgressListItem() { Name = $"Item {name}" };
-      Items.Add(item);
-      return updateInstruction(item.CreateProgress).ContinueWith(t => { item.Exception = t.Exception; return item; });
-      //if removed with callback, i need to think about dispatcher threads   
-    }
-
-    public class ProgressListItem : INotifyPropertyChanged {
-      [UsedImplicitly]
-      public string Name { get; set; }
-      [UsedImplicitly]
-      public double Progress { get; set; }
-
-      public Progress<double> CreateProgress => new Progress<double>(d => Progress = d);
-
-      public event PropertyChangedEventHandler PropertyChanged;
-
-      public AggregateException Exception { get; set; }
-    }
-  }
 }

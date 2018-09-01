@@ -104,8 +104,13 @@ namespace MangaScraper.Application.Services {
             _task = null;
         }
 
-        public Task<string> GetCoverUrl(string provider, string url) {
-            return _manager.CoverUrl(provider, url);
+        public async Task<string> GetCoverUrl(string provider, string url) {
+            try {
+                return await _manager.CoverUrl(provider, url);
+            }
+            catch (Exception) {
+                return string.Empty;
+            }
         }
 
         public Task<IEnumerable<IChapterParser>> Chapters(string provider, string url) {

@@ -35,7 +35,7 @@ namespace MangaScraper.UI.Presentation.Manga {
 
 
       var a = chaptersToDownload
-        .Select(chapter => (chapter.Number, (MultiProgressViewModel.UpdateInstruction)(progress => chapter.DownloadTo(targetFolder, progress))))
+        .Select(chapter => (chapter.Number, (MultiProgressViewModel.AsyncWork)(progress => chapter.DownloadTo(targetFolder, progress))))
         .Reverse()
         .ToList();
       MultiProgress.ScheduleProgress(a);
