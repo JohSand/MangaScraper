@@ -7,6 +7,8 @@ using Caliburn.Micro;
 using JetBrains.Annotations;
 
 namespace MangaScraper.UI.Presentation.Common {
+    public delegate Task AsyncWork(IProgress<double> d);
+
     public class MultiProgressViewModel {
         [UsedImplicitly]
         public int BatchSize { get; set; } = 3;
@@ -16,7 +18,7 @@ namespace MangaScraper.UI.Presentation.Common {
         [UsedImplicitly]
         public BindableCollection<ProgressListItem> Items { get; } = new BindableCollection<ProgressListItem>();
 
-        public delegate Task AsyncWork(IProgress<double> d);
+
 
         public async void ScheduleProgress(IEnumerable<(string, AsyncWork)> thingsToDo) {
             var remainingItems = new Stack<(string, AsyncWork)>(thingsToDo);

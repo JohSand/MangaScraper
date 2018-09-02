@@ -1,15 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using MangaScraper.Application.Services;
-using MangaScraper.Core.Helpers;
 using MangaScraper.Core.Scrapers;
 using MangaScraper.UI.Helpers;
 using MangaScraper.UI.Main;
-using Reactive.Bindings;
 
 namespace MangaScraper.UI.Presentation.Manga {
     public class SearchViewModel : PropertyChangedBase {
@@ -17,30 +16,32 @@ namespace MangaScraper.UI.Presentation.Manga {
 
         public SearchViewModel(IMangaIndex mangaIndex) {
             MangaIndex = mangaIndex;
-            Instances = new BindableCollection<ProviderSetViewModel>();
             Genres = new GenresViewModel();
-            Genres.OnPropertyChanges(t => t.SelectedGenres).Select(a => SelectedRowsChanged()).Subscribe();
-            SearchString = new ReactiveProperty<string>("");
-            SearchString
-                .Throttle(System.TimeSpan.FromMilliseconds(300))
+            Instances = this.OnPropertyChanges(s => s.SearchString)
+                .Throttle(TimeSpan.FromMilliseconds(300))
+                .SelectTask(FindMangas)
+                .Merge(Genres.OnPropertyChanges(t => t.SelectedGenres).SelectTask(SelectedGenreChanged))
                 .ObserveOn(Dispatcher.CurrentDispatcher)
-                .Select(s => { Instances.Clear(); return s; })
-                .Where(s => s.Length > 3)
-
-                .Select(FindMangas)
-                
-                .Subscribe();
+                .ToReactiveCollection();
         }
 
-        public async Task FindMangas(string searchString) {           
+        public async Task<List<ProviderSetViewModel>> FindMangas(string searchString) {
+            if (searchString.Length <= 3)
+                return new List<ProviderSetViewModel>();
             var mangas = await MangaIndex.FindMangas(searchString);
-            var matches = mangas
-                    .Where(m => m.MetaData.Genres.HasFlag(Genres.SelectedGenres))
-                    .Take(20)
-                    .Select(g => new ProviderSetViewModel(g, MangaIndex))
-                    .ToList()
-                ;
-            Instances.AddRange(matches);
+            return mangas
+                .Where(m => m.MetaData.Genres.HasFlag(Genres.SelectedGenres))
+                .Take(20)
+                .Select(g => new ProviderSetViewModel(g, MangaIndex))
+                .ToList();
+        }
+
+        public async Task<List<ProviderSetViewModel>> SelectedGenreChanged(Genre genre) {
+            if ((SearchString?.Length ?? 0) > 3)
+                return Instances.Where(m => m.MetaData.Genres.HasFlag(genre)).ToList();
+            //if no search string .Where(kvp => kvp.Name.ToLowerInvariant().Contains(lower))
+            var mangas = await MangaIndex.FindMangas(genre);
+            return mangas.Take(20).Select(g => new ProviderSetViewModel(g, MangaIndex)).ToList();
         }
 
         public async void UpdateButton_Click() {
@@ -51,27 +52,12 @@ namespace MangaScraper.UI.Presentation.Manga {
             }
         }
 
-        public async Task SelectedRowsChanged() {
-            //if no search string
-            if ((SearchString.Value?.Length ?? 0) <= 2) {
-                Instances.Clear();
-                var asd = await MangaIndex.FindMangas(Genres.SelectedGenres).ToListAsync();
-                Instances.AddRange(asd.Take(20).Select(g => new ProviderSetViewModel(g, MangaIndex)));
-            }
-            else {
-                Genre selectedGenres = Genres.SelectedGenres;
-                Instances.RemoveWhere(m => !m.MetaData.Genres.HasFlag(selectedGenres));
-            }
-
-            return;
-        }
-
-        public BindableCollection<ProviderSetViewModel> Instances { get; set; }
+        public IObservableCollection<ProviderSetViewModel> Instances { get; set; }
 
         public ProviderSetViewModel SelectedInstance { get; set; }
 
         public GenresViewModel Genres { get; set; }
 
-        public ReactiveProperty<string> SearchString { get; }
+        public string SearchString { get; set;  }
     }
 }

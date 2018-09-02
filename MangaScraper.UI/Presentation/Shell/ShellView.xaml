@@ -6,6 +6,7 @@
   xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
   mc:Ignorable="d"
   Title="Scraper"
+    Icon="../../tehepelo.ico"
   x:Class="MangaScraper.UI.Presentation.Shell.ShellView">
   <controls:MetroWindow.RightWindowCommands>
     <controls:WindowCommands>

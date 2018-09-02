@@ -12,7 +12,7 @@ namespace MangaScraper.UI.Presentation.Hello {
     public HelloViewModel(IMetaDataService metaDataService) {
       _metaDataService = metaDataService;
 
-      Progress = 0.1;
+      Progress = 0.0;
     }
 
     public string Context { get; set; }

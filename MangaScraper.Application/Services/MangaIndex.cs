@@ -86,17 +86,11 @@ namespace MangaScraper.Application.Services {
             //todo create index, store to disk, etc
         }
 
-        public void Start() {
-            if (_task != null)
-                return;
-            _task = _metaDataService.Start(_source.Token);
-        }
+        public void Start() => _task = _task ?? _metaDataService.Start(_source.Token);
 
         public void Stop() {
             _source.Cancel();
             try {
-                //this is a comment
-
                 _task?.GetAwaiter().GetResult();
             }
             catch (Exception e) when (e is OperationCanceledException) { }
