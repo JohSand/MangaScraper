@@ -104,7 +104,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
         return null;
       }
 
-      var t = service.Start(cts.Token, GetProgress);
+      var t = service.Start(cts.Token);
 
       try {
         await t;
