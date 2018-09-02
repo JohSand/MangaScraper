@@ -9,13 +9,18 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using MangaScraper.Application.Services;
 using MangaScraper.Core.Helpers;
+using Reactive.Bindings;
 using static System.Math;
 
 namespace MangaScraper.UI.Helpers {
     public static class CaliburnExtensions {
+        public static IObservableCollection<T> ToReactiveCollection<T>(this IObservable<List<T>> source) =>
+            new ReactiveCollection<T>(source);
+
         public static IObservable<B> SelectTask<A, B>(this IObservable<A> source, Func<A, Task<B>> transform) =>
             source.Select(x => Observable.FromAsync(_ => transform(x))).SelectMany(x => x);
 
+        public static ReactiveProperty<T> AsReactiveProperty<T>(this T t) => new ReactiveProperty<T>(t);
 
         public static async Task<BindableCollection<ChapterInstance>> GetChapters(this IMangaIndex index, string provider, string url) {
             try {
@@ -46,7 +51,7 @@ namespace MangaScraper.UI.Helpers {
             return new BindableCollection<T>(source);
         }
 
-        public static void RemoveWhere<T>(this BindableCollection<T> source, Predicate<T> p) {
+        public static void RemoveWhere<T>(this IObservableCollection<T> source, Predicate<T> p) {
             var itemsToRemove = source.Where(t => p(t)).ToList();
             source.RemoveRange(itemsToRemove);
         }

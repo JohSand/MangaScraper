@@ -9,12 +9,13 @@ namespace MangaScraper.UI.Presentation.Manga {
     public class MangaViewModel : Screen, IPrimaryScreen {
         public MangaViewModel(SearchViewModel searchView) {
             SearchViewModel = searchView;
-            ProviderSetViewModel = SearchViewModel
-                .OnPropertyChanges(s => s.SelectedInstance)
-                .ToReactiveProperty();
+
+            ProviderSetViewModel = SearchViewModel.OnPropertyChanges(s => s.SelectedInstance).ToReactiveProperty();
+
             ProviderSetViewModel
                 .Subscribe(a => {
-                    if (a != null && a.SelectedProvider.Provider == null) a.SelectedProvider = a.Providers.First();
+                    if (a != null && a.SelectedProvider.Provider == null) 
+                        a.SelectedProvider = a.Providers.First();
                 });
         }
 

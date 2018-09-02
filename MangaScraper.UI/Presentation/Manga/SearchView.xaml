@@ -37,7 +37,7 @@
             Height="28"
             TextWrapping="Wrap"
             Width="100"
-            Text="{Binding SearchString.Value, UpdateSourceTrigger=PropertyChanged}" />
+            x:Name="SearchString"/>
     </StackPanel>
     <ContentControl
         Grid.Row="1" Grid.Column="1"

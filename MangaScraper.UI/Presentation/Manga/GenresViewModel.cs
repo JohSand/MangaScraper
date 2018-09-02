@@ -12,12 +12,12 @@ namespace MangaScraper.UI.Presentation.Manga {
             SelectedItems.CollectionChanged += (sender, args) => NotifyOfPropertyChange(nameof(SelectedGenres));
         }
 
-        private static T[] GetValues<T>() where T : Enum => (T[]) Enum.GetValues(typeof(T));
+        
 
         public ObservableConcurrentDictionary<string, object> SelectedItems { get; set; } =
             new ObservableConcurrentDictionary<string, object>();
 
-        public Dictionary<string, object> Items { get; } = GetValues<Genre>().ToDictionary(e => e.ToString(), e => (object) e);
+        public Dictionary<string, object> Items { get; } = GenreExtensions.GetValues<Genre>().ToDictionary(e => e.ToString(), e => (object) e);
 
         public Genre SelectedGenres => SelectedItems.Any() ? SelectedItems.Select(kvp => (Genre) kvp.Value).Merge() : Genre.None;
     }
