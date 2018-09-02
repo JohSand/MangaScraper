@@ -6,6 +6,21 @@ using System.Threading.Tasks;
 
 namespace MangaScraper.Core.Helpers {
     public static class Extensions {
+        public static async Task<IEnumerable<T>> Transform<T>(this IEnumerable<IGrouping<int, string>> source, 
+                                                              Func<string , Task<IEnumerable<T>>> action, 
+                                                              IProgress<double> progress = null) {
+            var list = new List<T>();
+            var percent = 100.0 / source.Count();
+            foreach (var group in source) {
+                var e = await Task.WhenAll(@group.Select(action));
+                list.AddRange(e.SelectMany(x => x));
+                progress?.Report(percent * (@group.Key + 1) / 100.0);
+                await Task.Delay(100);
+            }
+
+            return list;
+        }
+
         public static IEnumerable<IGrouping<int, T>> Batch<T>(this IEnumerable<T> source, int size) =>
             source.Select((t, i) => (index: i / size, item: t)).GroupBy(t => t.index, t => t.item);
 

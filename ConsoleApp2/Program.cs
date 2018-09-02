@@ -1,5 +1,4 @@
 ﻿using MangaScraper.Application.Services;
-using MangaScraper.Core.Scrapers.Manga.Kakalot;
 using MangaScraper.UI.Composition;
 using ShellProgressBar;
 using System;
@@ -17,13 +16,11 @@ namespace MangaScraper.Core.Scrapers.Manga {
             //await TestKakalot();
 
             await Populate(
-                    new Panda.SeriesParser(),
-                   // new Kakalot.SeriesParser(),
-                    new Fun.SeriesParser()
-
-
-                    //new Eden.SeriesParser()
-                );
+                new Panda.SeriesParser(),
+                new Kakalot.SeriesParser(),
+                new Fun.SeriesParser()
+                , new Eden.SeriesParser()
+            );
             //await GetMetaData(new Eden.SeriesParser());
             return 0;
         }
@@ -40,7 +37,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
 
             for (int i = 4; i < 9; i++) {
                 var url = $"http://mangakakalot.com/chapter/goblin_slayer_side_story_year_one/chapter_{i}";
-                var chapterParser = new ChapterParser(url);
+                var chapterParser = new Kakalot.ChapterParser(url);
 
                 using (var pb = new ConsoleProgress(options)) {
                     await mrg.DownloadChapterTo(chapterParser, @"C:\Pile\Test", pb);
@@ -60,10 +57,20 @@ namespace MangaScraper.Core.Scrapers.Manga {
             var manager = new MangaDownloader(new FileSystem(), parser);
             var index = new MangaIndex(manager, null, memCache);
 
-
+            var first = true;
+            ConsoleProgress pb = null;
             IProgress<double> GetProgress(string context) {
-                return new ConsoleProgress(options, context);
+                pb?.Dispose();
+                if (first)
+                    first = false;
+                else {
+                    Console.WriteLine();
+                    Console.WriteLine();
+                }
+
+                return pb = new ConsoleProgress(options, context);
             }
+
             try {
                 await index.Update(GetProgress);
             }
@@ -159,7 +166,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
             var p1 = await chapter.GetImageUrl(6, getter);
             var p2 = await chapter.GetImageUrl(7, getter);
             var p3 = await chapter.GetImageUrl(19, getter);
-            var mrg = new MangaDownloader(sys, new List<ISeriesParser> { fox });
+            var mrg = new MangaDownloader(sys, new List<ISeriesParser> {fox});
 
 
             using (var pb = new ConsoleProgress(options)) {
@@ -172,7 +179,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
 
             public ConsoleProgress(ProgressBarOptions options, string context = "test") => _bar = new ProgressBar(100, context, options);
 
-            public void Report(double value) => _bar.Tick((int)(value * 100));
+            public void Report(double value) => _bar.Tick((int) (value * 100));
 
             public IProgress<double> GetProgress() => new Progress<double>(Report);
 

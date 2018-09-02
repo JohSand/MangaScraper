@@ -46,17 +46,13 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
             var count = pag.Children.Length;
             var secondLast = pag.Children[count - 2];
             var max = int.Parse(secondLast.TextContent);
-            var list = new List<(string name, string url)>();
-            var nrOfBatches = max / 20.0;
-            var percent = 100 / nrOfBatches;
-            foreach (var group in Enumerable.Range(1, max).Select(i => $"https://www.mangaeden.com/en/en-directory/?page={i}").Batch(20)) {
-                var e = await Task.WhenAll(group.Select(u => GetMangaList(pageGetter, u)));
-                list.AddRange(e.SelectMany(x => x));
-                progress?.Report(percent * (group.Key + 1) / 100.0);
-                await Task.Delay(100);
-            }
-            return list;
+            return await Enumerable.Range(1, max)
+                .Select(i => $"https://www.mangaeden.com/en/en-directory/?page={i}")
+                .Batch(8)
+                .Transform(u => GetMangaList(pageGetter, u), progress);
         }
+
+
 
         private static async Task<IEnumerable<(string name, string url)>> GetMangaList(PageGetter doc, string url) {
             var page = await doc(url);
