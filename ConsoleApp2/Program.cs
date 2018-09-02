@@ -1,25 +1,33 @@
-﻿using System;
+﻿using MangaScraper.Application.Services;
+using MangaScraper.Core.Scrapers.Manga.Kakalot;
+using MangaScraper.UI.Composition;
+using ShellProgressBar;
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MangaScraper.Application.Services;
-using MangaScraper.Core.Scrapers.Manga.Kakalot;
-using MangaScraper.UI.Composition;
-using ShellProgressBar;
 
 
 namespace MangaScraper.Core.Scrapers.Manga {
-    class Program {
-        static async Task<int> Main(string[] args) {
+    internal class Program {
+        private static async Task<int> Main(string[] args) {
             //await Download();
             //await TestKakalot();
 
-            //await Populate();
-            await GetMetaData(new Eden.SeriesParser());
+            await Populate(
+                    new Panda.SeriesParser(),
+                   // new Kakalot.SeriesParser(),
+                    new Fun.SeriesParser()
+
+
+                    //new Eden.SeriesParser()
+                );
+            //await GetMetaData(new Eden.SeriesParser());
             return 0;
         }
+
 
         private static async Task TestKakalot() {
             var options = new ProgressBarOptions {
@@ -40,7 +48,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
             }
         }
 
-        private static async Task Populate() {
+        private static async Task Populate(params ISeriesParser[] parser) {
             var options = new ProgressBarOptions {
                 ForegroundColor = ConsoleColor.Yellow,
                 BackgroundColor = ConsoleColor.DarkYellow,
@@ -48,23 +56,23 @@ namespace MangaScraper.Core.Scrapers.Manga {
             };
 
             var memCache = new MemFile();
-            var panda = new Panda.SeriesParser();
 
-            var manager = new MangaDownloader(new FileSystem(), new List<ISeriesParser> {panda});
+            var manager = new MangaDownloader(new FileSystem(), parser);
+            var index = new MangaIndex(manager, null, memCache);
 
-            (IEnumerable<(string name, string url)> Result, string provider)[] res;
-            using (var pb = new ConsoleProgress(options)) {
-                var provider = manager.Providers.First();
-                var thing = await manager.ListInstances(provider, pb);
-                res = new (IEnumerable<(string name, string url)> Result, string provider)[] {
-                    (thing, provider)
-                };
-                //res = await Task.WhenAll(manager.Providers.Select(p => manager.ListInstances(p, pb).ContinueWith(t => (t.Result, provider: p))));
+
+            IProgress<double> GetProgress(string context) {
+                return new ConsoleProgress(options, context);
             }
+            try {
+                await index.Update(GetProgress);
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.Message);
+            }
+            //res = await Task.WhenAll(manager.Providers.Select(p => manager.ListInstances(p, pb).ContinueWith(t => (t.Result, provider: p))));
 
-            var asd = res.SelectMany(q => q.Result, (x, t) => (x.provider, t.name, t.url));
-            await memCache.WriteToDisk(asd);
-            var res2 = await memCache.GetAsync();
+
             //var res = await MyDictionary;
             //MyDictionary = new AsyncLazy<Dictionary<string, MangaInfo>>(CreateDictionary);
         }
@@ -151,7 +159,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
             var p1 = await chapter.GetImageUrl(6, getter);
             var p2 = await chapter.GetImageUrl(7, getter);
             var p3 = await chapter.GetImageUrl(19, getter);
-            var mrg = new MangaDownloader(sys, new List<ISeriesParser> {fox});
+            var mrg = new MangaDownloader(sys, new List<ISeriesParser> { fox });
 
 
             using (var pb = new ConsoleProgress(options)) {
@@ -159,18 +167,16 @@ namespace MangaScraper.Core.Scrapers.Manga {
             }
         }
 
-        class ConsoleProgress : IProgress<double>, IDisposable {
+        private class ConsoleProgress : IProgress<double>, IDisposable {
             private readonly ProgressBar _bar;
 
             public ConsoleProgress(ProgressBarOptions options, string context = "test") => _bar = new ProgressBar(100, context, options);
 
-            public void Report(double value) {
-                _bar.Tick((int) (value * 100));
-            }
+            public void Report(double value) => _bar.Tick((int)(value * 100));
 
-            public void Dispose() {
-                _bar?.Dispose();
-            }
+            public IProgress<double> GetProgress() => new Progress<double>(Report);
+
+            public void Dispose() => _bar?.Dispose();
         }
     }
 }
