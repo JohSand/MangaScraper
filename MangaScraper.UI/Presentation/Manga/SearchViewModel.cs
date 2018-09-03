@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -18,17 +19,17 @@ namespace MangaScraper.UI.Presentation.Manga {
             MangaIndex = mangaIndex;
             Genres = new GenresViewModel();
             Instances = this.OnPropertyChanges(s => s.SearchString)
-                .Throttle(TimeSpan.FromMilliseconds(300))
+                .ObserveOn(Dispatcher.CurrentDispatcher)
+                .Throttle(TimeSpan.FromMilliseconds(500), DispatcherScheduler.Current)
                 .SelectTask(FindMangas)
                 .Merge(Genres.OnPropertyChanges(t => t.SelectedGenres).SelectTask(SelectedGenreChanged))
-                .ObserveOn(Dispatcher.CurrentDispatcher)
                 .ToReactiveCollection();
         }
 
         public async Task<List<ProviderSetViewModel>> FindMangas(string searchString) {
             if (searchString.Length <= 3)
                 return new List<ProviderSetViewModel>();
-            var mangas = await MangaIndex.FindMangas(searchString);
+            var mangas = await MangaIndex.FindMangas(searchString).ConfigureAwait(false);
             return mangas
                 .Where(m => m.MetaData.Genres.HasFlag(Genres.SelectedGenres))
                 .Take(20)
@@ -40,7 +41,7 @@ namespace MangaScraper.UI.Presentation.Manga {
             if ((SearchString?.Length ?? 0) > 3)
                 return Instances.Where(m => m.MetaData.Genres.HasFlag(genre)).ToList();
             //if no search string .Where(kvp => kvp.Name.ToLowerInvariant().Contains(lower))
-            var mangas = await MangaIndex.FindMangas(genre);
+            var mangas = await MangaIndex.FindMangas(genre).ConfigureAwait(false);
             return mangas.Take(20).Select(g => new ProviderSetViewModel(g, MangaIndex)).ToList();
         }
 
