@@ -29,7 +29,7 @@ namespace MangaScraper.UI.Bootstrap {
                 .AsSelf();
 
 
-           // builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser()).AsImplementedInterfaces();
+           builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser()).AsImplementedInterfaces();
             builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Panda.SeriesParser()).AsImplementedInterfaces();
             builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Fun.SeriesParser()).AsImplementedInterfaces();
             builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser()).AsImplementedInterfaces();

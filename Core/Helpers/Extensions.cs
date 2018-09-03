@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MangaScraper.Core.Helpers {
     public static class Extensions {
-        public static async Task<IEnumerable<T>> Transform<T>(this IEnumerable<IGrouping<int, string>> source, 
-                                                              Func<string , Task<IEnumerable<T>>> action, 
+        public static async Task<IEnumerable<T>> Transform<T, TEnum>(this IEnumerable<IGrouping<int, TEnum>> source, 
+                                                              Func<TEnum , Task<IEnumerable<T>>> action, 
                                                               IProgress<double> progress = null) {
             var list = new List<T>();
             var percent = 100.0 / source.Count();
@@ -16,6 +16,30 @@ namespace MangaScraper.Core.Helpers {
                 list.AddRange(e.SelectMany(x => x));
                 progress?.Report(percent * (@group.Key + 1) / 100.0);
                 await Task.Delay(100);
+            }
+
+            return list;
+        }
+
+        public static Task<IEnumerable<T>> Transform<T, TEnum>(this IEnumerable<IGrouping<int, TEnum>> source,
+                                              Func<TEnum, Task<T>> action,
+                                              IProgress<double> progress = null,
+                                              int delay = 100) =>
+            Transform(source, action, CancellationToken.None, progress, delay);
+
+        public static async Task<IEnumerable<T>> Transform<T, TEnum>(this IEnumerable<IGrouping<int, TEnum>> source,
+                                                      Func<TEnum, Task<T>> action,
+                                                      CancellationToken token,
+                                                      IProgress<double> progress = null,
+                                                      int delay = 100) {
+            var list = new List<T>();
+            var percent = 1.0 / source.Count();
+            foreach (var group in source) {
+                token.ThrowIfCancellationRequested();
+                var e = await Task.WhenAll(@group.Select(action));
+                list.AddRange(e);
+                progress?.Report(percent * (@group.Key + 1));
+                await Task.Delay(delay, token);
             }
 
             return list;

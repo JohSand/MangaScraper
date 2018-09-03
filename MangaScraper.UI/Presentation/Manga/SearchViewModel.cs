@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using MangaScraper.Application.Services;
 using MangaScraper.Core.Scrapers;
 using MangaScraper.UI.Helpers;
 using MangaScraper.UI.Main;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace MangaScraper.UI.Presentation.Manga {
     public class SearchViewModel : PropertyChangedBase {
@@ -18,10 +19,11 @@ namespace MangaScraper.UI.Presentation.Manga {
             MangaIndex = mangaIndex;
             Genres = new GenresViewModel();
             Instances = this.OnPropertyChanges(s => s.SearchString)
-                .Throttle(TimeSpan.FromMilliseconds(300))
+                .ObserveOn(Dispatcher.CurrentDispatcher)
+                .Throttle(TimeSpan.FromMilliseconds(300), DispatcherScheduler.Current)
                 .SelectTask(FindMangas)
                 .Merge(Genres.OnPropertyChanges(t => t.SelectedGenres).SelectTask(SelectedGenreChanged))
-                .ObserveOn(Dispatcher.CurrentDispatcher)
+
                 .ToReactiveCollection();
         }
 
@@ -58,6 +60,6 @@ namespace MangaScraper.UI.Presentation.Manga {
 
         public GenresViewModel Genres { get; set; }
 
-        public string SearchString { get; set;  }
+        public string SearchString { get; set; }
     }
 }

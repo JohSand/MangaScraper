@@ -16,10 +16,10 @@ namespace MangaScraper.Core.Scrapers.Manga {
             //await TestKakalot();
 
             await Populate(
-                new Panda.SeriesParser(),
-                new Kakalot.SeriesParser(),
-                new Fun.SeriesParser()
-                , new Eden.SeriesParser()
+                //new Panda.SeriesParser(),
+                //new Kakalot.SeriesParser(),
+                //new Fun.SeriesParser()                , 
+                new Eden.SeriesParser()
             );
             //await GetMetaData(new Eden.SeriesParser());
             return 0;
