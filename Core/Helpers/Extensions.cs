@@ -6,8 +6,19 @@ using System.Threading.Tasks;
 
 namespace MangaScraper.Core.Helpers {
     public static class Extensions {
-        public static async Task<IEnumerable<T>> Transform<T, TEnum>(this IEnumerable<IGrouping<int, TEnum>> source, 
-                                                              Func<TEnum , Task<IEnumerable<T>>> action, 
+            public static async Task Transform<TGrouping>(this IEnumerable<IGrouping<int, TGrouping>> source, 
+                                                              Func<TGrouping , Task> action, 
+                                                              IProgress<double> progress = null) {
+            var percent = 100.0 / source.Count();
+            foreach (var group in source) {
+                await Task.WhenAll(@group.Select(action));
+                progress?.Report(percent * (@group.Key + 1) / 100.0);
+                await Task.Delay(100);
+            }
+        }
+
+        public static async Task<IEnumerable<T>> Transform<T, TGrouping>(this IEnumerable<IGrouping<int, TGrouping>> source, 
+                                                              Func<TGrouping , Task<IEnumerable<T>>> action, 
                                                               IProgress<double> progress = null) {
             var list = new List<T>();
             var percent = 100.0 / source.Count();
