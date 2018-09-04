@@ -87,8 +87,6 @@ namespace MangaScraper.UI.Bootstrap {
         }
 
         protected override void OnExit(object sender, EventArgs e) {
-            var asd = Container.Resolve<IMangaIndex>();
-            asd.Stop();
             base.OnExit(sender, e);
         }
     }

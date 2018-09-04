@@ -13,7 +13,7 @@ using static System.Environment;
 using static System.IO.Path;
 
 namespace MangaScraper.Application.Services {
-    public class MetaDataService : IMetaDataService {
+    public class MetaDataService : IMetaDataRepository, IMetaDataService {
         private static string DirectoryPath => Combine(GetFolderPath(SpecialFolder.ApplicationData), "MangaScraper");
 
         public MetaDataService(IMetaDataParser metaDataParser) {

@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using Caliburn.Micro;
+using MangaScraper.Application.Services;
 using MangaScraper.Core.Scrapers.Manga;
 using MangaScraper.UI.Composition;
 
 namespace MangaScraper.UI.Presentation.Hello {
   public class HelloViewModel : Screen, IPrimaryScreen {
+    private readonly CancellationTokenSource _source = new CancellationTokenSource();
     private readonly IMetaDataService _metaDataService;
+    private Task _task;
     public int Order => 2;
 
     public HelloViewModel(IMetaDataService metaDataService) {
@@ -40,10 +45,22 @@ namespace MangaScraper.UI.Presentation.Hello {
       base.OnDeactivate(close);
       _metaDataService.ReportProgressFactory = null;
     }
+    public void Start() => _task = _task ?? _metaDataService.Start(_source.Token);
+
+    public void Stop() {
+      _source.Cancel();
+      try {
+        _task?.GetAwaiter().GetResult();
+      }
+      catch (Exception e) when (e is OperationCanceledException) { }
+
+      _task = null;
+    }
 
     public bool? IsButtonVisible { get; set; }
 
-    public override string DisplayName {
+    public override string DisplayName
+    {
       get => "Hello";
       set { }
     }
