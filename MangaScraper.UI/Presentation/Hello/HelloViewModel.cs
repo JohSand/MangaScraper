@@ -1,18 +1,13 @@
 ﻿using Caliburn.Micro;
 using MangaScraper.Application.Services;
 using MangaScraper.UI.Composition;
+using MangaScraper.UI.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using Caliburn.Micro;
-using MangaScraper.Application.Services;
-using MangaScraper.Core.Scrapers.Manga;
-using MangaScraper.UI.Composition;
-using MangaScraper.UI.Helpers;
 
 namespace MangaScraper.UI.Presentation.Hello {
     public class HelloViewModel : Screen, IPrimaryScreen {
@@ -29,11 +24,11 @@ namespace MangaScraper.UI.Presentation.Hello {
             _metaDataService = metaDataService;
             Providers = _metaDataService.Parsers.ToBindableCollection();
             SelectedProvider = Providers.First();
-            Progress = 0.0;
+            _timer.Tick += SetElapsed;
+            this.OnPropertyChanges(s => s.Context).Subscribe(_ => _stopwatch.Restart());
         }
-        public HelloViewModel(IMetaDataService metaDataService) => _metaDataService = metaDataService;
 
-        private void SetElapsed(object _, EventArgs __) => ElapsedTime = _stopwatch.Elapsed.ToString("mm:ss");
+        private void SetElapsed(object _, EventArgs __) => ElapsedTime = _stopwatch.Elapsed.ToString(@"h\.mm\:ss");
 
         public BindableCollection<string> Providers { get; }
 
@@ -49,32 +44,18 @@ namespace MangaScraper.UI.Presentation.Hello {
         protected override void OnActivate() {
             base.OnActivate();
             var dispatcher = Dispatcher.CurrentDispatcher;
-            var progress = new Progress<double>(d => Progress = d);
-            var timer = new DispatcherTimer();
-            //await Enumerable.Range(1, 100)
-            //  .Select(async i => {
-            //    dispatcher.Invoke(() => Test.Value = (double) i);
-            //    await Task.Delay(10);
-            //  })
-            //  .WhenAll();
+            var progress = new Progress<double>(d => Progress = d * 100);
             _metaDataService.ReportProgressFactory = context => {
                 this.Context = SelectedProvider + ": " + context;
-                StopTimer();
-                StartTimer(timer);
+
+                if (!_timer.IsEnabled)
+                    _timer.Start();
                 return progress;
                 //return new Progress<double>(d => dispatcher.Invoke(() =>  this.Test.Value = d));
             };
         }
 
-        public void StartTimer(DispatcherTimer timer) {
-            this.timer = timer;
-            stopWatch = new Stopwatch();
-            timer.Tick += (s, e) => ElapsedTime = stopWatch.Elapsed.ToString(@"mm\:ss");
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
 
-            stopWatch.Start();
-            timer.Start();
-        }
 
         public void StopTimer() {
             _timer.Stop();
@@ -88,10 +69,7 @@ namespace MangaScraper.UI.Presentation.Hello {
             _timer.Tick -= SetElapsed;
             _timer.Stop();
         }
-        public void Start() {
-            //Task = Task ?? _metaDataService.Start(_source.Token);
-            var callback = _metaDataService.ReportProgressFactory.Invoke("dummy");
-        }
+        public void Start() => Task = Task ?? _metaDataService.Start(SelectedProvider, _source.Token);
 
         public bool CanStart => Task is null;
 

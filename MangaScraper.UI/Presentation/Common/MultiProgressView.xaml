@@ -1,18 +1,22 @@
-﻿<ListView x:Class="MangaScraper.UI.Presentation.Common.MultiProgressView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+﻿<ContentControl  
+    x:Class="MangaScraper.UI.Presentation.Common.MultiProgressView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="MangaScraper.UI.Main"
-             mc:Ignorable="d"
-            BorderThickness="0"
-             x:Name="Items">
-  <ListView.ItemTemplate>
-    <DataTemplate>
-      <StackPanel Orientation="Horizontal">
-        <Label Content="{Binding Path=Name}" />
-        <ProgressBar Height="20" Width="100" Value="{Binding Path=Progress}" Maximum="1" />
-      </StackPanel>
-    </DataTemplate>
-  </ListView.ItemTemplate>
-</ListView>
+
+             mc:Ignorable="d">
+    <ListBox 
+        BorderThickness="0"            
+        x:Name="Items">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="{Binding Path=Name}" />
+                    <ProgressBar Height="20" Width="180" Value="{Binding Path=Progress}" Maximum="1" />
+                </StackPanel>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
+</ContentControl>
