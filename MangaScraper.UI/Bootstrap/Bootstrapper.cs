@@ -1,20 +1,17 @@
-﻿using System;
+﻿using Autofac;
+using MangaScraper.Application.Services;
+using MangaScraper.UI.Composition;
+using MangaScraper.UI.Presentation.Shell;
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Reflection;
 using System.Text;
 using System.Windows;
-using Autofac;
-using MangaScraper.Application.Services;
-using MangaScraper.Core.Scrapers.Manga;
-using MangaScraper.UI.Composition;
-using MangaScraper.UI.Presentation.Shell;
 
 namespace MangaScraper.UI.Bootstrap {
     public class Bootstrapper : AutofacBootstrapper<ShellViewModel> {
-        public Bootstrapper() {
-            Initialize();
-        }
+        public Bootstrapper() => Initialize();
 
         protected override void ConfigureBootstrapper() {
             base.ConfigureBootstrapper();
@@ -29,7 +26,7 @@ namespace MangaScraper.UI.Bootstrap {
                 .AsSelf();
 
 
-           builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser()).AsImplementedInterfaces();
+            builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser()).AsImplementedInterfaces();
             builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Panda.SeriesParser()).AsImplementedInterfaces();
             builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Fun.SeriesParser()).AsImplementedInterfaces();
             builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser()).AsImplementedInterfaces();
@@ -75,16 +72,12 @@ namespace MangaScraper.UI.Bootstrap {
 
         protected override IEnumerable<object> GetAllInstances(Type serviceType) => base.GetAllInstances(serviceType);
 
-        protected override void BuildUp(object instance) {
-            base.BuildUp(instance);
-        }
+        protected override void BuildUp(object instance) => base.BuildUp(instance);
 
-        protected override void OnStartup(object sender, StartupEventArgs e) {
-            DisplayRootViewFor<ShellViewModel>(new Dictionary<string, object> {
-                ["WindowState"] = WindowState.Maximized,
-                ["SizeToContent"] = SizeToContent.Manual
-            });
-        }
+        protected override void OnStartup(object sender, StartupEventArgs e) => DisplayRootViewFor<ShellViewModel>(new Dictionary<string, object> {
+            ["WindowState"] = WindowState.Maximized,
+            ["SizeToContent"] = SizeToContent.Manual
+        });
 
         protected override void OnExit(object sender, EventArgs e) {
             var asd = Container.Resolve<IMangaIndex>();

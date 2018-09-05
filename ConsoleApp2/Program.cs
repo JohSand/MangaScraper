@@ -93,7 +93,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
 
             var cts = new CancellationTokenSource();
             var mgr = new MangaDownloader(null, new List<ISeriesParser>());
-            var getter = mgr.PageGetter;
+            PageGetter getter = Client.GetDocumentAsync;
             var doc = await getter("https://www.mangaeden.com/en/en-manga/naruto/");
             //var doc = await getter("http://manganelo.com/manga/read_naruto_manga_online_free3");
             var metaData = parser.GetMetaData(doc);
@@ -158,7 +158,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
             IFileSystem sys = new FileSystem();
             var fox = new Kakalot.SeriesParser();
             var mgr = new MangaDownloader(null, new List<ISeriesParser>());
-            var getter = mgr.PageGetter;
+            PageGetter getter = Client.GetDocumentAsync;
 
             var chapter = fox.CreateChapter("http://mangakakalot.com/chapter/koushaku_reijou_no_tashinami/chapter_16");
 

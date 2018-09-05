@@ -23,7 +23,7 @@ namespace MangaScraper.UI.Presentation.Manga {
       SelectedInstance = this
           .OnPropertyChanges(s => s.SelectedProvider)
           .SelectTask(a => CreateChapterInstanceViewModel(a.Provider, a.Url))
-          .ObserveOn(Dispatcher.CurrentDispatcher)
+          //.ObserveOn(Dispatcher.CurrentDispatcher)
           .ToReactiveProperty();
 
       SelectedInstance
