@@ -6,7 +6,7 @@ using AngleSharp.Dom.Html;
 using MangaScraper.Core.Helpers;
 
 namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
-    public struct SeriesParser : ISeriesParser {
+    public struct SeriesParser : ISeriesParser, IMetaDataParser {
         public string ProviderName => "MangaKakalot";
 
         public MetaData GetMetaData(IHtmlDocument doc) {

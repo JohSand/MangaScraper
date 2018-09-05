@@ -11,7 +11,7 @@ using MangaScraper.Core.Scrapers.Manga;
 namespace MangaScraper.Application.Services {
     public class MangaIndex : IMangaIndex {
         private readonly IMangaDownloader _manager;
-        private readonly IMetaDataService _metaDataService;
+        private readonly IMetaDataRepository _metaDataService;
         private readonly IMemCache _memCache;
         private readonly CancellationTokenSource _source = new CancellationTokenSource();
         private Task _task;
@@ -19,7 +19,7 @@ namespace MangaScraper.Application.Services {
         private AsyncLazy<MangaInfo[]> MyDictionary { get; set; }
 
 
-        public MangaIndex(IMangaDownloader manager, IMetaDataService metaDataService, IMemCache memCache) {
+        public MangaIndex(IMangaDownloader manager, IMetaDataRepository metaDataService, IMemCache memCache) {
             _manager = manager;
             _metaDataService = metaDataService;
             _memCache = memCache;
@@ -84,18 +84,6 @@ namespace MangaScraper.Application.Services {
 
 
             //todo create index, store to disk, etc
-        }
-
-        public void Start() => _task = _task ?? _metaDataService.Start(_source.Token);
-
-        public void Stop() {
-            _source.Cancel();
-            try {
-                _task?.GetAwaiter().GetResult();
-            }
-            catch (Exception e) when (e is OperationCanceledException) { }
-
-            _task = null;
         }
 
         public async Task<string> GetCoverUrl(string provider, string url) {

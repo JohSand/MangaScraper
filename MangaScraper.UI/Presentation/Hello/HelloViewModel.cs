@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using Caliburn.Micro;
+using MangaScraper.Application.Services;
 using MangaScraper.Core.Scrapers.Manga;
 using MangaScraper.UI.Composition;
 
 namespace MangaScraper.UI.Presentation.Hello {
   public class HelloViewModel : Screen, IPrimaryScreen {
+    private readonly CancellationTokenSource _source = new CancellationTokenSource();
     private readonly IMetaDataService _metaDataService;
+
     public int Order => 2;
 
     public HelloViewModel(IMetaDataService metaDataService) {
@@ -18,6 +24,8 @@ namespace MangaScraper.UI.Presentation.Hello {
     public string Context { get; set; }
 
     public double Progress { get; set; }
+
+    public Task Task { get; set; }
 
     protected override void OnActivate() {
       base.OnActivate();
@@ -36,16 +44,47 @@ namespace MangaScraper.UI.Presentation.Hello {
       };
     }
 
+    public void StartTimer() {
+      var timer = new DispatcherTimer();
+      var stopWatch = new Stopwatch();
+      timer.Tick += (s, e) => {
+
+      };
+      timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+
+      stopWatch.Start();
+      timer.Start();
+    }
+
+
     protected override void OnDeactivate(bool close) {
       base.OnDeactivate(close);
       _metaDataService.ReportProgressFactory = null;
     }
+    public void Start() => Task = Task ?? _metaDataService.Start(_source.Token);
+
+    public bool CanStart => Task is null;
+
+    public void Stop() {
+      _source.Cancel();
+      try {
+        Task?.GetAwaiter().GetResult();
+      }
+      catch (Exception e) when (e is OperationCanceledException) { }
+
+      Task = null;
+    }
+
+    public bool CanStop => Task != null;
 
     public bool? IsButtonVisible { get; set; }
 
-    public override string DisplayName {
+    public override string DisplayName
+    {
       get => "Hello";
       set { }
     }
+
+
   }
 }
