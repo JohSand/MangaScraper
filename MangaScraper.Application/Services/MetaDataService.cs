@@ -3,6 +3,7 @@ using MangaScraper.Core.Scrapers;
 using MangaScraper.Core.Scrapers.Manga;
 using MessagePack.Resolvers;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
@@ -16,8 +17,9 @@ namespace MangaScraper.Application.Services {
     public class MetaDataService : IMetaDataRepository, IMetaDataService {
         private static string DirectoryPath => Combine(GetFolderPath(SpecialFolder.ApplicationData), "MangaScraper");
 
-        public MetaDataService(IMetaDataParser metaDataParser) {
-            MetaDataParser = metaDataParser;
+        public MetaDataService(ICollection<IMetaDataParser> metaDataParsers) {
+            MetaDataParsers = metaDataParsers.ToDictionary(p => p.ProviderName);
+
             PageGetter = Client.GetDocumentAsync;
 
             Path = Combine(DirectoryPath, "meta.data");
@@ -34,11 +36,13 @@ namespace MangaScraper.Application.Services {
         private readonly object _progressLock = new object();
         private GetProgress _reportProgressFactory;
 
-        private IMetaDataParser MetaDataParser { get; }
+        private IDictionary<string, IMetaDataParser> MetaDataParsers { get; }
 
         private PageGetter PageGetter { get; }
 
         private string Path { get; }
+
+        public ICollection<string> Parsers => MetaDataParsers.Keys;
 
         public GetProgress ReportProgressFactory {
             get {
@@ -59,13 +63,13 @@ namespace MangaScraper.Application.Services {
             }
         }
 
-        public Task Start(CancellationToken token) {
+        public Task Start(string parser, CancellationToken token) {
             var scheduler = new SingleThreadTaskScheduler(ApartmentState.MTA);
 
             async Task EventLoop() {
                 using (scheduler) {
                     while (!token.IsCancellationRequested) {
-                        var thing = await DownloadMetaData(token);
+                        var thing = await DownloadMetaData(parser, token);
                         token.ThrowIfCancellationRequested();
                         using (await _lock.LockAsync()) {
                             await WriteToDisk(thing).ConfigureAwait(false);
@@ -84,20 +88,20 @@ namespace MangaScraper.Application.Services {
               .Unwrap();
         }
 
-        private async Task<(string, MetaData)[]> DownloadMetaData(CancellationToken token) {
+        private async Task<(string, MetaData)[]> DownloadMetaData(string parser, CancellationToken token) {
             var progress = ReportProgressFactory?.Invoke("Instances");
-            var instances = await MetaDataParser.ListInstances(PageGetter, progress).ToListAsync();
+            var instances = await MetaDataParsers[parser].ListInstances(PageGetter, progress).ToListAsync();
             var p = ReportProgressFactory?.Invoke("MetaData");
             return await instances
                 .Batch(5)
-                .Transform(t => GetMetaData(t), token, p, 10)
+                .Transform(t => GetMetaData(parser, t), token, p, 10)
                 .ToArrayAsync();
         }
 
-        public async Task<(string, MetaData)> GetMetaData((string name, string url) valueTuple) {
+        public async Task<(string, MetaData)> GetMetaData(string parser, (string name, string url) valueTuple) {
             try {
                 var doc = await PageGetter(valueTuple.url);
-                return (valueTuple.name, MetaDataParser.GetMetaData(doc));
+                return (valueTuple.name, MetaDataParsers[parser].GetMetaData(doc));
             }
             catch (Exception e) {
                 Console.WriteLine(e);

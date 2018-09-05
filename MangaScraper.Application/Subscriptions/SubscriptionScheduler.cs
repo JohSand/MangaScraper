@@ -15,7 +15,7 @@ namespace MangaScraper.Application.Subscriptions {
             var subscriptions = await _subscriptionRepository.GetSubscriptions();
             foreach (var sub in subscriptions) {
                 var missingChapters = await _subscriptionService.DownloadMissingChapters(sub);
-
+                //todo notify about downloaded chapters
                 missingChapters.ForEach(sub.KnownChapters.Add);
             }
             await _subscriptionRepository.Save();

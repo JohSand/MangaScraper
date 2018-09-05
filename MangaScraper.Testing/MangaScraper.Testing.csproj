@@ -24,4 +24,10 @@
     <ProjectReference Include="..\MangaScraper.Application\MangaScraper.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\kakalot1.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

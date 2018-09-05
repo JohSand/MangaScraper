@@ -2,10 +2,17 @@
 using MangaScraper.Application.Services;
 using MangaScraper.UI.Composition;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Caliburn.Micro;
+using MangaScraper.Application.Services;
+using MangaScraper.Core.Scrapers.Manga;
+using MangaScraper.UI.Composition;
+using MangaScraper.UI.Helpers;
 
 namespace MangaScraper.UI.Presentation.Hello {
     public class HelloViewModel : Screen, IPrimaryScreen {
@@ -18,10 +25,19 @@ namespace MangaScraper.UI.Presentation.Hello {
 
         public int Order => 2;
 
+        public HelloViewModel(IMetaDataService metaDataService) {
+            _metaDataService = metaDataService;
+            Providers = _metaDataService.Parsers.ToBindableCollection();
+            SelectedProvider = Providers.First();
+            Progress = 0.0;
+        }
         public HelloViewModel(IMetaDataService metaDataService) => _metaDataService = metaDataService;
 
         private void SetElapsed(object _, EventArgs __) => ElapsedTime = _stopwatch.Elapsed.ToString("mm:ss");
 
+        public BindableCollection<string> Providers { get; }
+
+        public string SelectedProvider { get; set; }
         public string Context { get; set; }
 
         public double Progress { get; set; }
@@ -32,19 +48,32 @@ namespace MangaScraper.UI.Presentation.Hello {
 
         protected override void OnActivate() {
             base.OnActivate();
+            var dispatcher = Dispatcher.CurrentDispatcher;
             var progress = new Progress<double>(d => Progress = d);
-
+            var timer = new DispatcherTimer();
+            //await Enumerable.Range(1, 100)
+            //  .Select(async i => {
+            //    dispatcher.Invoke(() => Test.Value = (double) i);
+            //    await Task.Delay(10);
+            //  })
+            //  .WhenAll();
             _metaDataService.ReportProgressFactory = context => {
-                if (context != Context)
-                    _stopwatch.Restart();
-
-                this.Context = context;
-                if (!_timer.IsEnabled)
-                    _timer.Start();
-
+                this.Context = SelectedProvider + ": " + context;
+                StopTimer();
+                StartTimer(timer);
                 return progress;
+                //return new Progress<double>(d => dispatcher.Invoke(() =>  this.Test.Value = d));
             };
-            _timer.Tick += SetElapsed;
+        }
+
+        public void StartTimer(DispatcherTimer timer) {
+            this.timer = timer;
+            stopWatch = new Stopwatch();
+            timer.Tick += (s, e) => ElapsedTime = stopWatch.Elapsed.ToString(@"mm\:ss");
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+
+            stopWatch.Start();
+            timer.Start();
         }
 
         public void StopTimer() {

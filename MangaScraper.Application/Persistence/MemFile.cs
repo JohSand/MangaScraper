@@ -1,18 +1,18 @@
-﻿using MangaScraper.Application.Persistence;
-using MangaScraper.Core.Helpers;
-using MessagePack;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Environment;
+using MangaScraper.Core.Helpers;
+using MangaScraper.UI.Composition;
+using MessagePack;
 using SysPath = System.IO.Path;
 
-namespace MangaScraper.UI.Composition {
+namespace MangaScraper.Application.Persistence {
     public class MemFile : IMemCache {
         private static string DirectoryPath =>
-            SysPath.Combine(GetFolderPath(SpecialFolder.ApplicationData), "MangaScraper");
+            SysPath.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MangaScraper");
 
         private string Path { get; }
 
