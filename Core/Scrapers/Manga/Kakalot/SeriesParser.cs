@@ -15,9 +15,12 @@ namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
             var author = li[1];
             var genres = li[6];
             var strings = genres.Elements("a").Select(e => e.TextContent.ParseAsGenre()).Merge();
-
+            var blurb = doc.GetElementById("noidungm");
             return new MetaData {
-                Genres = strings
+                Genres = strings,
+                Author = author.Elements("a").First().TextContent,
+                Completed = li[2].TextContent != "Status : Ongoing",
+                Blurb = blurb.ChildNodes.Last().TextContent.Trim()
             };
         }
 
