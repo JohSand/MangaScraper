@@ -8,6 +8,7 @@ using System.IO.Abstractions;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using MangaScraper.Core.Scrapers.Manga;
 
 namespace MangaScraper.UI.Bootstrap {
     public class Bootstrapper : AutofacBootstrapper<ShellViewModel> {
@@ -26,10 +27,10 @@ namespace MangaScraper.UI.Bootstrap {
                 .AsSelf();
 
 
-            builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser()).AsImplementedInterfaces();
-            builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Panda.SeriesParser()).AsImplementedInterfaces();
-            builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Fun.SeriesParser()).AsImplementedInterfaces();
-            builder.Register(_ => new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser()).As<ISeriesParser>();
+            builder.Register(_ => new Core.Scrapers.Manga.Eden.SeriesParser()).AsImplementedInterfaces();
+            builder.Register(_ => new Core.Scrapers.Manga.Panda.SeriesParser()).AsImplementedInterfaces();
+            builder.Register(_ => new Core.Scrapers.Manga.Fun.SeriesParser()).AsImplementedInterfaces();
+            builder.Register(_ => new Core.Scrapers.Manga.Kakalot.SeriesParser()).As<ISeriesParser>();
             //builder.RegisterType<FoxScraper>().AsImplementedInterfaces();
             //builder.RegisterType<MangaFoxProvider>().AsImplementedInterfaces().SingleInstance();
             //todo register parser by convention

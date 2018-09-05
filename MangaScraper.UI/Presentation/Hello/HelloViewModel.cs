@@ -12,6 +12,8 @@ namespace MangaScraper.UI.Presentation.Hello {
   public class HelloViewModel : Screen, IPrimaryScreen {
     private readonly CancellationTokenSource _source = new CancellationTokenSource();
     private readonly IMetaDataService _metaDataService;
+    private Stopwatch stopWatch;
+    private DispatcherTimer timer;
 
     public int Order => 2;
 
@@ -25,12 +27,15 @@ namespace MangaScraper.UI.Presentation.Hello {
 
     public double Progress { get; set; }
 
+    public string ElapsedTime { get; set; }
+
     public Task Task { get; set; }
 
     protected override void OnActivate() {
       base.OnActivate();
       var dispatcher = Dispatcher.CurrentDispatcher;
       var progress = new Progress<double>(d => Progress = d);
+      var timer = new DispatcherTimer();
       //await Enumerable.Range(1, 100)
       //  .Select(async i => {
       //    dispatcher.Invoke(() => Test.Value = (double) i);
@@ -39,21 +44,29 @@ namespace MangaScraper.UI.Presentation.Hello {
       //  .WhenAll();
       _metaDataService.ReportProgressFactory = context => {
         this.Context = context;
+        StopTimer();
+        StartTimer(timer);
         return progress;
         //return new Progress<double>(d => dispatcher.Invoke(() =>  this.Test.Value = d));
       };
     }
 
-    public void StartTimer() {
-      var timer = new DispatcherTimer();
-      var stopWatch = new Stopwatch();
-      timer.Tick += (s, e) => {
-
-      };
+    public void StartTimer(DispatcherTimer timer) {
+      this.timer = timer;
+      stopWatch = new Stopwatch();
+      timer.Tick += (s, e) => ElapsedTime = stopWatch.Elapsed.ToString(@"mm\:ss");
       timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
 
       stopWatch.Start();
       timer.Start();
+    }
+
+    public void StopTimer()
+    {
+      timer?.Stop();
+      timer = null;
+      stopWatch?.Stop();
+      stopWatch = null;
     }
 
 
@@ -65,7 +78,7 @@ namespace MangaScraper.UI.Presentation.Hello {
 
     public bool CanStart => Task is null;
 
-    public void Stop() {
+    public void Stop() {      
       _source.Cancel();
       try {
         Task?.GetAwaiter().GetResult();
@@ -73,6 +86,9 @@ namespace MangaScraper.UI.Presentation.Hello {
       catch (Exception e) when (e is OperationCanceledException) { }
 
       Task = null;
+      Context = "";
+      Progress = 0;
+      StopTimer();
     }
 
     public bool CanStop => Task != null;

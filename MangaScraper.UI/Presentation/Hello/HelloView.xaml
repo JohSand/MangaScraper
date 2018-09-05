@@ -8,22 +8,29 @@
              mc:Ignorable="d" 
             >
   <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-    <TextBlock Text="This is the view for "/>
-    <TextBlock x:Name="DisplayName" />
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Text="This is the view for "/>
+      <TextBlock x:Name="DisplayName" />
+    </StackPanel>
     <StackPanel Orientation="Horizontal">
       <Button
+        Margin="1,1,1,1"
         Content="Start Indexing"
         Height="28"
         cal:Message.Attach="Start()"
         Grid.Row="0" Grid.Column="0" />
       <Button
+        Margin="1,1,1,1"
         Content="Stop Indexing"
         Height="28"
         cal:Message.Attach="Stop()"
         Grid.Row="0" Grid.Column="0" />
     </StackPanel>
     <TextBlock Text="." />
-    <TextBlock x:Name="Context" Width="300px"/>
-    <ProgressBar Width="300px" Value="{Binding Path=Progress}" Maximum="1"></ProgressBar>
+    <StackPanel Orientation="Horizontal" Width="300px">
+      <TextBlock x:Name="Context" Width="200" HorizontalAlignment="Left"/>
+      <TextBlock x:Name="ElapsedTime" HorizontalAlignment="Right"/>
+    </StackPanel>
+    <ProgressBar Width="300px" Value="{Binding Path=Progress}" Maximum="1" HorizontalAlignment="Left"></ProgressBar>
   </StackPanel>
 </UserControl>

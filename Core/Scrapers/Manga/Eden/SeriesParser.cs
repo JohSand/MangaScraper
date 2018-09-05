@@ -48,7 +48,7 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
             var max = int.Parse(secondLast.TextContent);
             return await Enumerable.Range(1, max)
                 .Select(i => $"https://www.mangaeden.com/en/en-directory/?page={i}")
-                .Batch(8)
+                .Batch(4)
                 .Transform(u => GetMangaList(pageGetter, u), progress);
         }
 

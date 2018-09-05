@@ -89,8 +89,8 @@ namespace MangaScraper.Application.Services {
             var instances = await MetaDataParser.ListInstances(PageGetter, progress).ToListAsync();
             var p = ReportProgressFactory?.Invoke("MetaData");
             return await instances
-                .Batch(20)
-                .Transform(t => GetMetaData(t), token, p, 1000)
+                .Batch(5)
+                .Transform(t => GetMetaData(t), token, p, 10)
                 .ToArrayAsync();
         }
 
