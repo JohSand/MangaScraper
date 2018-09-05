@@ -6,6 +6,6 @@ namespace MangaScraper.Application.Services {
   public interface IMetaDataService {
     Task Start(CancellationToken token);
 
-    GetProgress ReportProgressFactory { set; }
+    GetProgress ReportProgressFactory { get; set; }
   }
 }

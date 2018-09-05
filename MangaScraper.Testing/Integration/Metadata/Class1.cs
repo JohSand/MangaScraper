@@ -22,7 +22,6 @@ namespace MangaScraper.Testing.Integration.Metadata {
     [MemberData(nameof(GetNumbers))]
     public void AllNumbers(IMetaDataParser a) {
       Assert.NotNull(a);
-      a.ListInstances()
     }
   }
 }
