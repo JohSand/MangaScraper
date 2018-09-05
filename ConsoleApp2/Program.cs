@@ -7,6 +7,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MangaScraper.Application.Persistence;
 
 
 namespace MangaScraper.Core.Scrapers.Manga {
@@ -59,6 +60,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
 
             var first = true;
             ConsoleProgress pb = null;
+
             IProgress<double> GetProgress(string context) {
                 pb?.Dispose();
                 if (first)
@@ -98,7 +100,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
             //var doc = await getter("http://manganelo.com/manga/read_naruto_manga_online_free3");
             var metaData = parser.GetMetaData(doc);
 
-            var service = new MetaDataService(parser);
+            var service = new MetaDataService(new List<IMetaDataParser>() {parser});
 
             var wasCalled = false;
 
@@ -123,7 +125,7 @@ namespace MangaScraper.Core.Scrapers.Manga {
             }
 
             service.ReportProgressFactory = GetProgress;
-            var t = service.Start(cts.Token);
+            var t = service.Start(parser.ProviderName, cts.Token);
 
             try {
                 await t;

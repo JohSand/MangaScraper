@@ -13,8 +13,6 @@ namespace MangaScraper.Application.Services {
         private readonly IMangaDownloader _manager;
         private readonly IMetaDataRepository _metaDataService;
         private readonly IMemCache _memCache;
-        private readonly CancellationTokenSource _source = new CancellationTokenSource();
-        private Task _task;
 
         private AsyncLazy<MangaInfo[]> MyDictionary { get; set; }
 
@@ -58,11 +56,10 @@ namespace MangaScraper.Application.Services {
 
         public async Task<IEnumerable<MangaInfo>> FindMangas(string name) {
             //todo index, store to disk, etc
-            var lower = name.ToLowerInvariant();
             var dict = await MyDictionary;
             return dict
                 .AsParallel()
-                .Where(kvp => kvp.Name.ToLowerInvariant().Contains(lower))
+                .Where(kvp => kvp.Name.ToLowerInvariant().Contains(name.ToLowerInvariant()))
                 .ToList();
         }
 

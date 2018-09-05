@@ -67,29 +67,29 @@ namespace MangaScraper.Testing.Integration.Metadata {
             Assert.Empty(faiList);            
         }
 
-        [Fact]
-        public async Task CanParseAllEden() {
-            IMetaDataParser k = new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser();
-            var docs = await k.ListInstances(Client.GetDocumentAsync, new Progress<double>());
-            var faiList = new List<string>();
-            await docs.Batch(50)
-                .Transform(async t => {
-                        try {
-                            var d = k.GetMetaData(await Client.GetDocumentAsync(t.url));
-                            Assert.NotNull(d);
-                        }
-                        catch (Exception e) {
-                            Console.WriteLine(e);
-                            faiList.Add(t.url);
-                        }
+        //[Fact]
+        //public async Task CanParseAllEden() {
+        //    IMetaDataParser k = new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser();
+        //    var docs = await k.ListInstances(Client.GetDocumentAsync, new Progress<double>());
+        //    var faiList = new List<string>();
+        //    await docs.Batch(50)
+        //        .Transform(async t => {
+        //                try {
+        //                    var d = k.GetMetaData(await Client.GetDocumentAsync(t.url));
+        //                    Assert.NotNull(d);
+        //                }
+        //                catch (Exception e) {
+        //                    Console.WriteLine(e);
+        //                    faiList.Add(t.url);
+        //                }
 
-                        return 0;
-                    },
-                    CancellationToken.None,
-                    null,
-                    0);
+        //                return 0;
+        //            },
+        //            CancellationToken.None,
+        //            null,
+        //            0);
             
-            Assert.Empty(faiList);            
-        }
+        //    Assert.Empty(faiList);            
+        //}
     }
 }
