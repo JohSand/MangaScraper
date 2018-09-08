@@ -2,6 +2,7 @@
 
 namespace MangaScraper.Application.Subscriptions {
     public class SubscriptionItem {
+        public string Name { get; set; }
         public string Provider { get; set; }
         public string Url { get; set; }
         public HashSet<string> KnownChapters { get; set; }

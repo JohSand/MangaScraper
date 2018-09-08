@@ -93,7 +93,7 @@ namespace MangaScraper.Core.Helpers {
 
         public static Task<IEnumerable<T2>> Select<T, T2>(this Task<T[]> source, Func<T, T2> continuation) => source.ContinueWith(t => TryDo(t, x => x.Select(continuation)));
 
-        public static async Task<IEnumerable<T2>> ContinueWith<T, T2>(this IEnumerable<Task<T>> source, Func<T, Task<T2>> continuation) => await Task.WhenAll(source.Select(t => t.ContinueWith(tt => TryDo(tt, continuation)).Unwrap())).ConfigureAwait(false);
+        public static async Task<T2[]> ContinueWith<T, T2>(this IEnumerable<Task<T>> source, Func<T, Task<T2>> continuation) => await Task.WhenAll(source.Select(t => t.ContinueWith(tt => TryDo(tt, continuation)).Unwrap())).ConfigureAwait(false);
 
         /// <summary>
         /// Adds the continuation to each task in the source, and merges them to a single task, which completes when all tasks and continutations are done
@@ -103,7 +103,7 @@ namespace MangaScraper.Core.Helpers {
         /// <param name="source"></param>
         /// <param name="continuation"></param>
         /// <returns></returns>
-        public static async Task<IEnumerable<T2>> ContinueWith<T, T2>(this IEnumerable<Task<T>> source, Func<T, T2> continuation) {
+        public static async Task<T2[]> ContinueWith<T, T2>(this IEnumerable<Task<T>> source, Func<T, T2> continuation) {
             var asdf = source.Select(t => t.ContinueWith(tt => TryDo(tt, continuation)));
             return await Task.WhenAll(asdf).ConfigureAwait(false);
         }
@@ -125,12 +125,14 @@ namespace MangaScraper.Core.Helpers {
         /// <typeparam name="T"></typeparam>
         /// <param name="task"></param>
         /// <returns></returns>
-        public static async Task<IEnumerable<T>> Flatten<T>(this Task<IEnumerable<IEnumerable<T>>> task) {
+        public static async Task<IEnumerable<T>> Flatten<T>(this Task<IEnumerable<T>[]> task) {
             var result = await task.ConfigureAwait(false);
             return result.SelectMany(e => e);
         }
 
-        public static async Task WhenAll(this IEnumerable<Task> values, IProgress<double> progress = null) {
+        public static Task WhenAll(this IEnumerable<Task> values) => Task.WhenAll(values);
+
+        public static async Task WhenAll(this IEnumerable<Task> values, IProgress<double> progress) {
             var arr = values.ToArray();
             var tempCount = 0;
             void Update() {
@@ -138,8 +140,9 @@ namespace MangaScraper.Core.Helpers {
             }
             await arr.ContinueWith(Update).ConfigureAwait(false);
         }
+        public static Task<T[]> WhenAll<T>(this IEnumerable<Task<T>> values) => Task.WhenAll(values);
 
-        public static async Task<IEnumerable<T>> WhenAll<T>(this IEnumerable<Task<T>> values, IProgress<double> progress = null) {
+        public static async Task<T[]> WhenAll<T>(this IEnumerable<Task<T>> values, IProgress<double> progress) {
             var arr = values.ToArray();
             var tempCount = 0;
             T Update(T value) {
