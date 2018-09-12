@@ -28,27 +28,6 @@ namespace MangaScraper.UI.Helpers {
 
     public static ReactiveProperty<T> AsReactiveProperty<T>(this T t) => new ReactiveProperty<T>(t);
 
-    public static async Task<BindableCollection<ChapterInstance>> GetChapters(this IMangaIndex index, string provider, string url) {
-      try {
-        if (url == null) return new BindableCollection<ChapterInstance>();
-
-        var chapters = await index.Chapters(provider, url).ToListAsync();
-
-        var maxDigits = chapters.Count == 0 ? 1 : (int)Floor(Log10(Abs(chapters.Count))) + 1;
-        return chapters
-            .Select(c => new ChapterInstance {
-              MaxDigits = maxDigits,
-              Number = c.Number,
-              Parser = c,
-              Index = index
-            })
-            .OrderBy(e => e.Number)
-            .ToBindableCollection();
-      }
-      catch (Exception) {
-        return new BindableCollection<ChapterInstance>();
-      }
-    }
 
     public static BindableCollection<T> ToBindableCollection<T>(this IEnumerable<T> source) {
       if (source == null)

@@ -1,4 +1,5 @@
-﻿using MangaScraper.Core.Helpers;
+﻿using MangaScraper.Application.Services;
+using MangaScraper.Core.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,9 @@ using Utf8Json;
 using static System.Environment;
 
 namespace MangaScraper.Application.Subscriptions {
-    public class SubscriptionRepository {
+    public class SubscriptionRepository : ISubscriptionRepository {
+        private readonly AsyncLock _fileLock = new AsyncLock();
+
         public SubscriptionRepository()
             : this(GetFolderPath(SpecialFolder.ApplicationData)) { }
 
@@ -22,14 +25,23 @@ namespace MangaScraper.Application.Subscriptions {
         private string FilePath { get; }
         private Dictionary<(string, string), SubscriptionItem> _subscriptionItems;
 
+        public async Task<SubscriptionItem> GetSubscription((string, string) name) {
+            if (_subscriptionItems == null)
+                await ReadFromDisk();
+
+            return _subscriptionItems.ContainsKey(name) ? _subscriptionItems[name] : null;
+        }
+
         public async Task<ICollection<SubscriptionItem>> GetSubscriptions() =>
             _subscriptionItems?.Values ?? await ReadFromDisk();
 
         private async Task<ICollection<SubscriptionItem>> ReadFromDisk() {
-            var items = await new DirectoryInfo(FilePath)
-                .GetFiles("*.json")
-                .Select(subfile => GetSubscription(subfile))
-                .WhenAll();
+            FileInfo[] files;
+            using (await _fileLock.LockAsync()) {
+                files = new DirectoryInfo(FilePath).GetFiles("*.json");
+            }
+
+            var items = await files.Select(GetSubscription).WhenAll();
             _subscriptionItems = items.ToDictionary(i => (i.Name, i.Provider));
             return _subscriptionItems.Values;
         }
@@ -49,6 +61,7 @@ namespace MangaScraper.Application.Subscriptions {
             else
                 _subscriptionItems.Add((item.Name, item.Provider), item);
 
+            using(await _fileLock.LockAsync())
             using (var fs = File.Open(Path.Combine(FilePath, item.Name + ".json"), FileMode.Create)) {
                 await JsonSerializer.SerializeAsync(fs, item);
             }

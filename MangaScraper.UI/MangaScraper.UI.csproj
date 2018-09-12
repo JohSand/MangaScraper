@@ -161,6 +161,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helpers\ReactiveCollection.cs" />
+    <Compile Include="Presentation\Manga\SelectedManga\Chapters\ChapterInstances.cs" />
+    <Compile Include="Presentation\Manga\SelectedManga\Chapters\SubscriptionView.xaml.cs">
+      <DependentUpon>SubscriptionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Presentation\Manga\SelectedManga\Chapters\SubscriptionViewModel.cs" />
     <Compile Include="Presentation\Subscription\SubscriptionView.xaml.cs">
       <DependentUpon>SubscriptionView.xaml</DependentUpon>
     </Compile>
@@ -200,15 +205,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Presentation\Manga\ChapterInstanceView.xaml">
+    <Page Include="Presentation\Manga\SelectedManga\Chapters\ChapterInstanceView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Presentation\Manga\GenresView.xaml">
+    <Page Include="Presentation\Manga\Search\GenresView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Presentation\Manga\InstanceView.xaml">
+    <Page Include="Presentation\Manga\SelectedManga\Chapters\SubscriptionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Presentation\Manga\SelectedManga\InstanceView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -220,7 +229,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Presentation\Manga\SearchView.xaml">
+    <Page Include="Presentation\Manga\Search\SearchView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -256,18 +265,18 @@
       <DependentUpon>HelloView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Presentation\Hello\HelloViewModel.cs" />
-    <Compile Include="Presentation\Manga\ChapterInstanceView.xaml.cs">
+    <Compile Include="Presentation\Manga\SelectedManga\Chapters\ChapterInstanceView.xaml.cs">
       <DependentUpon>ChapterInstanceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Presentation\Manga\ChapterInstanceViewModel.cs" />
-    <Compile Include="Presentation\Manga\GenresView.xaml.cs">
+    <Compile Include="Presentation\Manga\SelectedManga\Chapters\ChapterInstanceViewModel.cs" />
+    <Compile Include="Presentation\Manga\Search\GenresView.xaml.cs">
       <DependentUpon>GenresView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Presentation\Manga\GenresViewModel.cs" />
-    <Compile Include="Presentation\Manga\InstanceView.xaml.cs">
+    <Compile Include="Presentation\Manga\Search\GenresViewModel.cs" />
+    <Compile Include="Presentation\Manga\SelectedManga\InstanceView.xaml.cs">
       <DependentUpon>InstanceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Presentation\Manga\InstanceViewModel.cs" />
+    <Compile Include="Presentation\Manga\SelectedManga\InstanceViewModel.cs" />
     <Compile Include="Presentation\Manga\MangaView.xaml.cs">
       <DependentUpon>MangaView.xaml</DependentUpon>
     </Compile>
@@ -276,10 +285,10 @@
       <DependentUpon>ProviderSetView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Presentation\Manga\ProviderSetViewModel.cs" />
-    <Compile Include="Presentation\Manga\SearchView.xaml.cs">
+    <Compile Include="Presentation\Manga\Search\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Presentation\Manga\SearchViewModel.cs" />
+    <Compile Include="Presentation\Manga\Search\SearchViewModel.cs" />
     <Compile Include="Presentation\Menu\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
     </Compile>

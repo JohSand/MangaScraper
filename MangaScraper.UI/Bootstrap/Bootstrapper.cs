@@ -1,6 +1,9 @@
 ﻿using Autofac;
+using MangaScraper.Application.Persistence;
 using MangaScraper.Application.Services;
-using MangaScraper.UI.Composition;
+using MangaScraper.Application.Subscriptions;
+using MangaScraper.UI.Presentation.Manga;
+using MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters;
 using MangaScraper.UI.Presentation.Shell;
 using System;
 using System.Collections.Generic;
@@ -8,8 +11,6 @@ using System.IO.Abstractions;
 using System.Reflection;
 using System.Text;
 using System.Windows;
-using MangaScraper.Application.Persistence;
-using MangaScraper.Core.Scrapers.Manga;
 
 namespace MangaScraper.UI.Bootstrap {
     public class Bootstrapper : AutofacBootstrapper<ShellViewModel> {
@@ -28,7 +29,7 @@ namespace MangaScraper.UI.Bootstrap {
                 .AsSelf();
 
             //todo test
-            
+
 
 
             builder.Register(_ => new Core.Scrapers.Manga.Eden.SeriesParser()).AsImplementedInterfaces();
@@ -43,6 +44,9 @@ namespace MangaScraper.UI.Bootstrap {
             builder.RegisterType<MangaIndex>().AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<MemFile>().AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<MetaDataService>().AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<SubscriptionRepository>().AsImplementedInterfaces().SingleInstance();
+
+
 
             AppDomain.CurrentDomain.UnhandledException += AppDomainOnUnhandledException;
         }
@@ -79,13 +83,13 @@ namespace MangaScraper.UI.Bootstrap {
 
         protected override void BuildUp(object instance) => base.BuildUp(instance);
 
-        protected override void OnStartup(object sender, StartupEventArgs e) => DisplayRootViewFor<ShellViewModel>(new Dictionary<string, object> {
-            ["WindowState"] = WindowState.Maximized,
-            ["SizeToContent"] = SizeToContent.Manual
-        });
-
-        protected override void OnExit(object sender, EventArgs e) {
-            base.OnExit(sender, e);
+        protected override void OnStartup(object sender, StartupEventArgs e) {
+            DisplayRootViewFor<ShellViewModel>(new Dictionary<string, object> {
+                ["WindowState"] = WindowState.Maximized,
+                ["SizeToContent"] = SizeToContent.Manual
+            });
         }
+
+        protected override void OnExit(object sender, EventArgs e) => base.OnExit(sender, e);
     }
 }

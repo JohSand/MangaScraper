@@ -14,27 +14,28 @@ using System.Windows.Threading;
 namespace MangaScraper.UI.Presentation.Manga {
     public class SearchViewModel : PropertyChangedBase {
         private IMangaIndex MangaIndex { get; }
+        public ProviderSetViewModel.Factory Factory { get; }
 
-        public SearchViewModel(IMangaIndex mangaIndex) {
+        public SearchViewModel(IMangaIndex mangaIndex, ProviderSetViewModel.Factory factory) {
             MangaIndex = mangaIndex;
+            Factory = factory;
             Genres = new GenresViewModel();
             Instances = this.OnPropertyChanges(s => s.SearchString)
                 .ObserveOn(Dispatcher.CurrentDispatcher)
                 .Throttle(TimeSpan.FromMilliseconds(500), DispatcherScheduler.Current)
                 .SelectTask(FindMangas)
                 .Merge(Genres.OnPropertyChanges(t => t.SelectedGenres).SelectTask(SelectedGenreChanged))
-
                 .ToReactiveCollection();
         }
 
         public async Task<List<ProviderSetViewModel>> FindMangas(string searchString) {
             if (searchString.Length <= 3)
                 return new List<ProviderSetViewModel>();
-            var mangas = await MangaIndex.FindMangas(searchString).ConfigureAwait(false);
+            var mangas = await MangaIndex.FindMangas(searchString);
             return mangas
                 .Where(m => m.MetaData.Genres.HasFlag(Genres.SelectedGenres))
                 .Take(20)
-                .Select(g => new ProviderSetViewModel(g, MangaIndex))
+                .Select(g => Factory(g))
                 .ToList();
         }
 
@@ -43,7 +44,7 @@ namespace MangaScraper.UI.Presentation.Manga {
                 return Instances.Where(m => m.MetaData.Genres.HasFlag(genre)).ToList();
             //if no search string .Where(kvp => kvp.Name.ToLowerInvariant().Contains(lower))
             var mangas = await MangaIndex.FindMangas(genre).ConfigureAwait(false);
-            return mangas.Take(20).Select(g => new ProviderSetViewModel(g, MangaIndex)).ToList();
+            return mangas.Take(20).Select(g => Factory(g)).ToList();
         }
 
         public async void UpdateButton_Click() {
