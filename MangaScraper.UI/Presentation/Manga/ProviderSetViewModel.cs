@@ -26,7 +26,9 @@ namespace MangaScraper.UI.Presentation.Manga {
             MetaData = mangaInfo.MetaData;
             var providerData = this
                 .OnPropertyChanges(s => s.SelectedProvider)
+                .Do(_ => IsLoading = true)
                 .SelectTask(a => GetProviderData(a.Provider, a.Url))
+                .Do(_ => IsLoading = false)
                 .ObserveOnDispatcher();
 
             SelectedInstance =
@@ -81,6 +83,8 @@ namespace MangaScraper.UI.Presentation.Manga {
 
         public MetaData MetaData { get; set; }
         public string Name { get; set; }
+        public bool IsLoading { get; set; }
+        public bool Loaded => !IsLoading;
 
         public ProviderData SelectedProvider { get; set; }
 

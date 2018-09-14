@@ -91,7 +91,7 @@ namespace MangaScraper.UI.Presentation.Hello {
         public bool? IsButtonVisible { get; set; }
 
         public override string DisplayName {
-            get => "Hello";
+            get => "Indexing";
             set { }
         }
 
