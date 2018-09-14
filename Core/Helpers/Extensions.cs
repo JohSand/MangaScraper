@@ -26,7 +26,7 @@ namespace MangaScraper.Core.Helpers {
                 var e = await Task.WhenAll(@group.Select(action));
                 list.AddRange(e.SelectMany(x => x));
                 progress?.Report(percent * (@group.Key + 1) / 100.0);
-                await Task.Delay(100);
+                await Task.Delay(10);
             }
 
             return list;

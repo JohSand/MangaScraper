@@ -11,6 +11,9 @@ namespace MangaScraper.Application.Services {
 
         private IReadOnlyDictionary<string, ISeriesParser> Parsers { get; }
 
+        public MangaDownloader(IFileSystem fileSystem, IEnumerable<ISeriesParser> parsers, PageGetter getter) : base(fileSystem, getter) =>
+            Parsers = parsers.ToDictionary(p => p.ProviderName, p => p);
+
         public MangaDownloader(IFileSystem fileSystem, IEnumerable<ISeriesParser> parsers) : base(fileSystem) =>
             Parsers = parsers.ToDictionary(p => p.ProviderName, p => p);
 

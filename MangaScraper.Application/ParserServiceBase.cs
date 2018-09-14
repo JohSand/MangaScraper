@@ -10,6 +10,12 @@ using System.Threading.Tasks;
 namespace MangaScraper.Application {
 
     public abstract class ParserServiceBase {
+        private ParserServiceBase(PageGetter getter) =>
+            PageGetter = getter;
+
+        protected ParserServiceBase(IFileSystem fileSystem, PageGetter getter) : this(getter) =>
+            FileSystem = fileSystem;
+
         private ParserServiceBase() =>
             PageGetter = Client.GetDocumentAsync;
 

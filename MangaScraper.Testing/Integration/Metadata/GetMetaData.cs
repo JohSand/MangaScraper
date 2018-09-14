@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp;
 using AngleSharp.Parser.Html;
 using MangaScraper.Application.Services;
 using MangaScraper.Core.Helpers;
@@ -23,6 +24,17 @@ namespace MangaScraper.Testing.Integration.Metadata {
 
         public bool IsOddNumber(int number) {
             return number % 2 != 0;
+        }
+
+        [Fact]
+        public void TestMe() {
+            var parser = new HtmlParser();
+           
+            var list = new List<EventArgs>();
+            parser.Context.ParseError += (sender, ev) => list.Add(ev);
+
+            var doc = parser.Parse("error");
+            Assert.NotEmpty(list);
         }
 
         [Fact]
@@ -63,8 +75,8 @@ namespace MangaScraper.Testing.Integration.Metadata {
                     CancellationToken.None,
                     null,
                     0);
-            
-            Assert.Empty(faiList);            
+
+            Assert.Empty(faiList);
         }
 
         //[Fact]
@@ -88,7 +100,7 @@ namespace MangaScraper.Testing.Integration.Metadata {
         //            CancellationToken.None,
         //            null,
         //            0);
-            
+
         //    Assert.Empty(faiList);            
         //}
     }

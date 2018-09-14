@@ -17,10 +17,10 @@ namespace MangaScraper.Application.Services {
     public class MetaDataService : IMetaDataRepository, IMetaDataService {
         private static string DirectoryPath => Combine(GetFolderPath(SpecialFolder.ApplicationData), "MangaScraper");
 
-        public MetaDataService(ICollection<IMetaDataParser> metaDataParsers) {
+        public MetaDataService(ICollection<IMetaDataParser> metaDataParsers, PageGetter getter) {
             MetaDataParsers = metaDataParsers.ToDictionary(p => p.ProviderName);
 
-            PageGetter = Client.GetDocumentAsync;
+            PageGetter = getter;
 
             Path = Combine(DirectoryPath, "meta.data");
 
@@ -30,6 +30,10 @@ namespace MangaScraper.Application.Services {
             if (!File.Exists(Path)) {
                 WriteToDisk(new (string, MetaData)[0]).GetAwaiter().GetResult();
             }
+        }
+
+        public MetaDataService(ICollection<IMetaDataParser> metaDataParsers) : this(metaDataParsers, Client.GetDocumentAsync) {
+
         }
 
         private readonly AsyncLock _lock = new AsyncLock();
@@ -88,7 +92,7 @@ namespace MangaScraper.Application.Services {
               .Unwrap();
         }
 
-        private async Task<(string, MetaData)[]> DownloadMetaData(string parser, CancellationToken token) {
+        public async Task<(string, MetaData)[]> DownloadMetaData(string parser, CancellationToken token) {
             var progress = ReportProgressFactory?.Invoke("Instances");
             var instances = await MetaDataParsers[parser].ListInstances(PageGetter, progress).ToListAsync();
             var p = ReportProgressFactory?.Invoke("MetaData");
