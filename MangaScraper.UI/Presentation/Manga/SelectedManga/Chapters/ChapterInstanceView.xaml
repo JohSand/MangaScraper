@@ -17,29 +17,31 @@
       <RowDefinition Height="40" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
+        <Border BorderBrush="Gainsboro" BorderThickness="1" Grid.Row="0">
+            <DataGrid
+                x:Name="Chapters"
+                Margin="10"
+                AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  Width="300" Height="350"
+                    HorizontalAlignment="Left"
+                  SelectionMode="Extended"
+                  cal:Message.Attach="[Event SelectionChanged] = [SelectedRowsChanged($eventArgs)]">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Number }" Width="*" SortDirection="Ascending" />
+                    <DataGridTemplateColumn MinWidth="100" Header="View">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Download" cal:Message.Attach="DownloadManga_OnClick($dataContext)" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
 
-    <DataGrid
-      x:Name="Chapters"
-      Grid.Row="0"
-      AutoGenerateColumns="False"
-      CanUserAddRows="False"
-      IsReadOnly="True"
-      Width="300" Height="350"
-        HorizontalAlignment="Left"
-      SelectionMode="Extended"
-      cal:Message.Attach="[Event SelectionChanged] = [SelectedRowsChanged($eventArgs)]">
-      <DataGrid.Columns>
-        <DataGridTextColumn Header="Name" Binding="{Binding Number }" Width="*" SortDirection="Ascending" />
-        <DataGridTemplateColumn MinWidth="100" Header="View">
-          <DataGridTemplateColumn.CellTemplate>
-            <DataTemplate>
-              <Button Content="Download" cal:Message.Attach="DownloadManga_OnClick($dataContext)" />
-            </DataTemplate>
-          </DataGridTemplateColumn.CellTemplate>
-        </DataGridTemplateColumn>
-      </DataGrid.Columns>
-    </DataGrid>
-    <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
+        <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
                 Orientation="Horizontal">
       <Button Content="Download Selection" Width="140" Height="20" Margin="5"
               cal:Message.Attach="DownloadSelected" />

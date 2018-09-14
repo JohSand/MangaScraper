@@ -33,21 +33,32 @@
             VerticalAlignment="Top"
             Width="200"
             x:Name="Cover" Grid.Row="1" Grid.Column="0" Grid.RowSpan="3" />
-        <TextBlock
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.RowSpan="3" 
+            >
+            <TextBlock
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Width="300"
-            x:Name="Genres" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap"
+            x:Name="Genres" 
+                
+                TextWrapping="Wrap"
             TextAlignment="Left"
-            Margin="0,0,0,0" />
+            Margin="10" />
 
-        <TextBlock
+            <TextBlock
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Width="300"
-            x:Name="Blurb" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" TextWrapping="Wrap"
+            x:Name="Blurb"
+               
+                TextWrapping="Wrap"
             TextAlignment="Left"
-            Margin="0,0,5,0" />
+            Margin="0,10,5,0" />
+        </StackPanel>
+
 
         <ContentControl x:Name="ChapterInstanceViewModel" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" />
     </Grid>

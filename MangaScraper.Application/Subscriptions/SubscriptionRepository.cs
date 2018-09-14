@@ -25,11 +25,11 @@ namespace MangaScraper.Application.Subscriptions {
         private string FilePath { get; }
         private Dictionary<(string, string), SubscriptionItem> _subscriptionItems;
 
-        public async Task<SubscriptionItem> GetSubscription((string, string) name) {
+        public async Task<SubscriptionItem> GetSubscription(string name, string provider) {
             if (_subscriptionItems == null)
                 await ReadFromDisk();
 
-            return _subscriptionItems.ContainsKey(name) ? _subscriptionItems[name] : null;
+            return _subscriptionItems.ContainsKey((name, provider)) ? _subscriptionItems[(name, provider)] : null;
         }
 
         public async Task<ICollection<SubscriptionItem>> GetSubscriptions() =>

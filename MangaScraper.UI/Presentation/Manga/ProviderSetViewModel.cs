@@ -36,7 +36,7 @@ namespace MangaScraper.UI.Presentation.Manga {
 
             Test =
                 providerData
-                .Select(vt => CreateInstanceViewModel(vt.coverUrl, SubscriptionFactory((SelectedProvider.Provider, Name), vt.chapters)))
+                .Select(vt => CreateInstanceViewModel(vt.coverUrl, SubscriptionFactory((Name, SelectedProvider), vt.chapters)))
                 .ToReactiveProperty();
 
             SelectedInstance
@@ -89,9 +89,12 @@ namespace MangaScraper.UI.Presentation.Manga {
         public ReactiveProperty<InstanceViewModel> Test { get; set; }
         public SubscriptionViewModel.Factory SubscriptionFactory { get; }
 
-        public struct ProviderData {
-            public string Provider { get; set; }
-            public string Url { get; set; }
-        }
+
+    }
+
+    public struct ProviderData {
+        public string Provider { get; set; }
+        public string Url { get; set; }
+        public void Deconstruct(out string provider, out string url) => (provider, url) = (Provider, Url);
     }
 }

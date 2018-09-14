@@ -5,7 +5,7 @@ namespace MangaScraper.Application.Subscriptions {
     public interface ISubscriptionRepository {
         Task Save(SubscriptionItem item);
 
-        Task<SubscriptionItem> GetSubscription((string, string) name);
+        Task<SubscriptionItem> GetSubscription(string name, string provider);
         Task<ICollection<SubscriptionItem>> GetSubscriptions();
     }
 }
