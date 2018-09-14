@@ -6,29 +6,24 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MangaScraper.Application.Subscriptions
-{
-    public class SubscriptionService : ParserServiceBase
-    {
+namespace MangaScraper.Application.Subscriptions {
+    public class SubscriptionService : ParserServiceBase {
         private IReadOnlyDictionary<string, ISeriesParser> Parsers { get; }
 
         public SubscriptionService(IFileSystem fileSystem, IEnumerable<ISeriesParser> parsers)
             : base(fileSystem) =>
             Parsers = parsers.ToDictionary(p => p.ProviderName, p => p);
 
-        public async Task<IEnumerable<string>> DownloadMissingChapters(SubscriptionItem item)
-        {
+        public async Task<List<string>> DownloadMissingChapters(SubscriptionItem item) {
             var missingChapters = await GetChapters(item).ConfigureAwait(false);
 
             await DownloadMissingChapters(item, missingChapters);
 
-            return missingChapters.Select(s => s.Number);
+            return missingChapters.Select(s => s.Number).ToList();
         }
 
-        private async Task DownloadMissingChapters(SubscriptionItem item, IEnumerable<IChapterParser> missingChapters)
-        {
-            IProgress<double> ProgressForContext(string context)
-            {
+        private async Task DownloadMissingChapters(SubscriptionItem item, IEnumerable<IChapterParser> missingChapters) {
+            IProgress<double> ProgressForContext(string context) {
                 //todo
                 return null;
             }
@@ -41,8 +36,7 @@ namespace MangaScraper.Application.Subscriptions
         public Task<ICollection<IChapterParser>> GetChapters(SubscriptionItem item) =>
           GetChapters(item.Provider, item.Url, item.KnownChapters);
 
-        public async Task<ICollection<IChapterParser>> GetChapters(string provider, string url, HashSet<string> exclude)
-        {
+        public async Task<ICollection<IChapterParser>> GetChapters(string provider, string url, HashSet<string> exclude) {
             var parser = Parsers[provider];
             return parser
                 .ChapterUrls(await PageGetter(url))

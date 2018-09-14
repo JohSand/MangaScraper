@@ -1,4 +1,5 @@
-﻿using MangaScraper.Core.Helpers;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MangaScraper.Application.Subscriptions {
@@ -11,14 +12,39 @@ namespace MangaScraper.Application.Subscriptions {
             _subscriptionService = subscriptionService;
         }
 
+        public Task Start(string parser, CancellationToken token) {
+            var scheduler = new SingleThreadTaskScheduler(ApartmentState.MTA);
+
+            async Task EventLoop() {
+                using (scheduler) {
+                    while (!token.IsCancellationRequested) {
+                        await Work();
+                        await Task.Delay(600 * 1000, token);
+                    }
+                }
+            }
+
+            return Task.Factory.StartNew(
+                EventLoop,
+                token,
+                TaskCreationOptions.None,
+                scheduler
+              )
+              .Unwrap();
+        }
+
+
         public async Task Work() {
             var subscriptions = await _subscriptionRepository.GetSubscriptions();
             foreach (var sub in subscriptions) {
                 var missingChapters = await _subscriptionService.DownloadMissingChapters(sub);
                 //todo notify about downloaded chapters
-                missingChapters.ForEach(sub.KnownChapters.Add);
+
+                if (missingChapters.Any()) {
+                    missingChapters.ForEach(s => sub.KnownChapters.Add(s));
+                    await _subscriptionRepository.Save(sub);
+                }
             }
-            await _subscriptionRepository.Save();
         }
     }
 }

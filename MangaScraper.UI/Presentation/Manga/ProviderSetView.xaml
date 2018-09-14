@@ -33,11 +33,14 @@
         </DataTemplate>
       </ComboBox.ItemTemplate>
     </ComboBox>
-
-    <ContentControl
-      Grid.Row="1"
-      Grid.Column="0"
-        cal:View.Model="{Binding SelectedInstance.Value}" />
-  </Grid>
+        <TabControl Grid.Row="1" Grid.Column="0" >
+            <TabItem Header="Download">
+                <ContentControl cal:View.Model="{Binding SelectedInstance.Value}" />
+            </TabItem>
+            <TabItem Header="Subscription" >
+                <ContentControl cal:View.Model="{Binding Test.Value}" />
+            </TabItem>
+        </TabControl>
+    </Grid>
 
 </UserControl>

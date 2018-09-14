@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters.SubscriptionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters"
+             xmlns:cal="http://www.caliburnproject.org"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="350" />
+        </Grid.RowDefinitions>-->
+
+
+        <StackPanel >
+            <Button Content="Create subscription" Margin="10" Height="40" cal:Message.Attach="Create" />
+            <TextBlock Margin="10" TextWrapping="Wrap">
+                Select the chapters you already have, and the new subscription will exclude them when looking for updates.
+            </TextBlock>
+            <Border BorderBrush="Gainsboro" BorderThickness="1">
+                <DataGrid 
+                      Style="{StaticResource AzureDataGrid}"
+                      x:Name="Chapters"
+                      Margin="10"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      Width="300" Height="350"
+                      HorizontalAlignment="Left"
+                      SelectionMode="Extended"
+                      cal:Message.Attach="[Event SelectionChanged] = [SelectedRowsChanged($eventArgs)]">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Number }" Width="*" SortDirection="Ascending" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

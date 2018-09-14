@@ -1,6 +1,7 @@
 ﻿using System.Windows.Media.Imaging;
 using Caliburn.Micro;
 using MangaScraper.Core.Scrapers;
+using MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters;
 
 namespace MangaScraper.UI.Presentation.Manga {
     public class InstanceViewModel : PropertyChangedBase {
@@ -10,7 +11,7 @@ namespace MangaScraper.UI.Presentation.Manga {
 
         //todo genres, description, etc
 
-        public ChapterInstanceViewModel ChapterInstanceViewModel { get; set; }
+        public ChapterInstances ChapterInstanceViewModel { get; set; }
 
         public BitmapImage Cover { get; set; }
 

@@ -18,8 +18,6 @@ namespace MangaScraper.UI.Presentation.Common {
         [UsedImplicitly]
         public BindableCollection<ProgressListItem> Items { get; } = new BindableCollection<ProgressListItem>();
 
-
-
         public async void ScheduleProgress(IEnumerable<(string, AsyncWork)> thingsToDo) {
             var remainingItems = new Stack<(string, AsyncWork)>(thingsToDo);
             var size = Math.Min(BatchSize, remainingItems.Count);

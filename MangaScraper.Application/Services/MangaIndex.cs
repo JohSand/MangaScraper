@@ -14,14 +14,14 @@ namespace MangaScraper.Application.Services {
         private readonly IMetaDataRepository _metaDataService;
         private readonly IMemCache _memCache;
 
-        private AsyncLazy<MangaInfo[]> MyDictionary { get; set; }
+        private Task<MangaInfo[]> MyDictionary { get; set; }
 
 
         public MangaIndex(IMangaDownloader manager, IMetaDataRepository metaDataService, IMemCache memCache) {
             _manager = manager;
             _metaDataService = metaDataService;
             _memCache = memCache;
-            MyDictionary = new AsyncLazy<MangaInfo[]>(CreateDictionary);
+            MyDictionary = CreateDictionary();
             //todo
         }
 
@@ -77,7 +77,7 @@ namespace MangaScraper.Application.Services {
             var group = result.AsParallel().SelectMany(q => q.data, (x, t) => (x.provider, t.name, t.url));
             await _memCache.WriteToDisk(group);
 
-            MyDictionary = new AsyncLazy<MangaInfo[]>(CreateDictionary);
+            MyDictionary = CreateDictionary();
 
 
             //todo create index, store to disk, etc
