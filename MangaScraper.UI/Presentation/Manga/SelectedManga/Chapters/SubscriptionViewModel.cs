@@ -34,7 +34,7 @@ namespace MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters {
                 Provider = Provider,
                 Path = targetFolder,
                 Url = Url,
-                KnownChapters = SelectedRows.Select(r => r.Number).ToHashSet()
+                KnownChapters = SelectedRows.Select(r => r.Number.TrimStart('0')).ToHashSet()
             };
             Subscription.Value = info;
             await Repository.Save(info);

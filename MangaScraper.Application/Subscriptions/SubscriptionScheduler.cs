@@ -1,18 +1,21 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MangaScraper.Application.Subscriptions {
-    public class SubscriptionScheduler {
-        private readonly SubscriptionService _subscriptionService;
-        private readonly SubscriptionRepository _subscriptionRepository;
+    public class SubscriptionScheduler : ISubscriptionScheduler {
+        private readonly ISubscriptionService _subscriptionService;
+        private readonly ISubscriptionRepository _subscriptionRepository;
 
-        public SubscriptionScheduler(SubscriptionService subscriptionService, SubscriptionRepository subscriptionRepository) {
+        public SubscriptionScheduler(ISubscriptionService subscriptionService, ISubscriptionRepository subscriptionRepository) {
             _subscriptionRepository = subscriptionRepository;
             _subscriptionService = subscriptionService;
         }
 
-        public Task Start(string parser, CancellationToken token) {
+        public event EventHandler<NewChaptersEventArgs> NewChapters;
+
+        public Task Start(CancellationToken token) {
             var scheduler = new SingleThreadTaskScheduler(ApartmentState.MTA);
 
             async Task EventLoop() {
@@ -36,10 +39,12 @@ namespace MangaScraper.Application.Subscriptions {
 
         public async Task Work() {
             var subscriptions = await _subscriptionRepository.GetSubscriptions();
-            foreach (var sub in subscriptions) {
+            var x = subscriptions.ToArray();
+            foreach (var sub in x) {
                 var missingChapters = await _subscriptionService.DownloadMissingChapters(sub);
                 //todo notify about downloaded chapters
-
+                var arg = new NewChaptersEventArgs(sub.Name, missingChapters);
+                NewChapters?.Invoke(this, arg);
                 if (missingChapters.Any()) {
                     missingChapters.ForEach(s => sub.KnownChapters.Add(s));
                     await _subscriptionRepository.Save(sub);
