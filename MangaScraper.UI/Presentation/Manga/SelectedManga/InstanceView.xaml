@@ -19,16 +19,30 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Label
-            Grid.Row="0"
-            Grid.Column="0"
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Grid.ColumnSpan="3">
+            <Label
+                Margin="2"
             x:Name="Name"
-            HorizontalAlignment="Center"
             Height="40"
-            VerticalAlignment="Center"
             Foreground="White"
             FontSize="14"
             FontWeight="Heavy" />
+            <Label
+                Margin="2"
+            x:Name="Artist"
+            Height="40"
+            Foreground="White"
+            FontSize="14"
+            FontWeight="Heavy" />
+            <Label
+                Margin="2"
+            x:Name="Author"
+            Height="40"
+            Foreground="White"
+            FontSize="14"
+            FontWeight="Heavy" />
+        </StackPanel>
+
         <Image
             VerticalAlignment="Top"
             Width="200"

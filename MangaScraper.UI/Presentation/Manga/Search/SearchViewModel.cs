@@ -25,6 +25,9 @@ namespace MangaScraper.UI.Presentation.Manga {
                 .Throttle(TimeSpan.FromMilliseconds(500), DispatcherScheduler.Current)
                 .SelectTask(FindMangas)
                 .Merge(Genres.OnPropertyChanges(t => t.SelectedGenres).SelectTask(SelectedGenreChanged))
+                .Merge(this.OnPropertyChanges(t => t.ArtistSearchString)
+                           .Throttle(TimeSpan.FromMilliseconds(500), DispatcherScheduler.Current)
+                           .SelectTask(FindMangasByArtist))
                 .ToReactiveCollection();
         }
 
@@ -32,6 +35,17 @@ namespace MangaScraper.UI.Presentation.Manga {
             if (searchString.Length <= 3)
                 return new List<ProviderSetViewModel>();
             var mangas = await MangaIndex.FindMangas(searchString);
+            return mangas
+                .Where(m => m.MetaData.Genres.HasFlag(Genres.SelectedGenres))
+                .Take(20)
+                .Select(g => Factory(g))
+                .ToList();
+        }
+
+        public async Task<List<ProviderSetViewModel>> FindMangasByArtist(string searchString) {
+            if (searchString.Length <= 6)
+                return new List<ProviderSetViewModel>();
+            var mangas = await MangaIndex.FindMangasByArtist(searchString);
             return mangas
                 .Where(m => m.MetaData.Genres.HasFlag(Genres.SelectedGenres))
                 .Take(20)
@@ -62,5 +76,7 @@ namespace MangaScraper.UI.Presentation.Manga {
         public GenresViewModel Genres { get; set; }
 
         public string SearchString { get; set; }
+
+        public string ArtistSearchString { get; set; }
     }
 }

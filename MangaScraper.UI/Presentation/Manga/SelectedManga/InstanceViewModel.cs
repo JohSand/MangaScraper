@@ -9,6 +9,9 @@ namespace MangaScraper.UI.Presentation.Manga {
 
         public string Name { get; set; }
 
+        public string Author => "Author: " + MetaData.Author;
+
+        public string Artist => "Artist: " + MetaData.Artist;
         //todo genres, description, etc
 
         public ChapterInstances ChapterInstanceViewModel { get; set; }

@@ -63,6 +63,17 @@ namespace MangaScraper.Application.Services {
                 .ToList();
         }
 
+        public async Task<IEnumerable<MangaInfo>> FindMangasByArtist(string artist) {
+            //todo index, store to disk, etc
+            var dict = await MyDictionary;
+            return dict
+                .AsParallel()
+                .GroupBy(kvp => kvp.MetaData.Artist)
+                .Where(kvp => kvp.Key?.ToUpperInvariant().Contains(artist.ToUpperInvariant()) == true)
+                .SelectMany(kvp => kvp)
+                .ToList();
+        }
+
         public IReadOnlyCollection<string> Providers => _manager.Providers.ToList();
 
         public Task Update() => Update(null);
