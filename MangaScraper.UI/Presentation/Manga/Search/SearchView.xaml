@@ -25,25 +25,32 @@
         Height="28"
         cal:Message.Attach="UpdateButton_Click()"
         Grid.Row="0" Grid.Column="0" />
-
-    <StackPanel Grid.Row="0" Grid.Column="1">
-        <Label
-            Content="Filter Here"
-            HorizontalAlignment="Center"
-            Height="28"
-            VerticalAlignment="Center"
-            Width="104" />
-        <TextBox
-            Height="28"
-            TextWrapping="Wrap"
-            Width="100"
-            x:Name="SearchString"/>
-    </StackPanel>
+    
     <ContentControl
-        Grid.Row="1" Grid.Column="1"
+        Grid.Row="0" Grid.Column="1"
         x:Name="Genres"
         Width="140"
         Height="100" />
+    
+    <TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <TabItem Header="Name">
+            <TextBox
+                HorizontalAlignment="Left"
+            Height="28"
+            TextWrapping="Wrap"
+            Width="150"
+            x:Name="SearchString"/>
+        </TabItem>
+        <TabItem Header="Artist">
+            <TextBox
+                HorizontalAlignment="Left"
+            Height="28"
+            TextWrapping="Wrap"
+            Width="150"
+            x:Name="ArtistSearchString"/>
+        </TabItem>
+    </TabControl>
+
     <DataGrid
         Grid.Row="2"
         Grid.Column="0"

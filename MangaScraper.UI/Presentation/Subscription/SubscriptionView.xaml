@@ -4,10 +4,48 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MangaScraper.UI.Presentation.Subscription"
+             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
             >
-  <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-    <TextBlock Text="This is the view for "/>
-    <TextBlock x:Name="DisplayName" />
-  </StackPanel>
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" x:Key="RightCell">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+        <TextBlock Text="This is the view for "/>
+        <TextBlock x:Name="DisplayName" />
+
+        <StackPanel >
+            <TextBlock Margin="10" TextWrapping="Wrap">
+                Recently updated subscriptions
+            </TextBlock>
+            <StackPanel Margin="20" Orientation="Horizontal">
+                <Button Margin="5,1,5,1" Content="Start Scanning" Height="28" cal:Message.Attach="Start()" Grid.Row="0" Grid.Column="0" />
+                <Button Margin="5,1,5,1" Content="Stop Scanning" Height="28" cal:Message.Attach="Stop()" Grid.Row="0" Grid.Column="0" />
+            </StackPanel>
+            <TextBlock Margin="10" TextWrapping="Wrap">
+                Recently updated subscriptions
+            </TextBlock>
+            <Border BorderBrush="Gainsboro" BorderThickness="1">
+                <DataGrid 
+                      Style="{StaticResource AzureDataGrid}"
+                      x:Name="Updates"
+                      Margin="10"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      Width="400" Height="350"
+                      HorizontalAlignment="Left"
+                    >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Series" Binding="{Binding Series }" Width="3*   " />
+                        <DataGridTextColumn Header="Chapter" Binding="{Binding Chapter }" Width="*" ElementStyle="{StaticResource RightCell}"/>
+                        <DataGridTextColumn Header="Added" Binding="{Binding Added, StringFormat=dd/MM HH:mm:ss }" Width="1*" ElementStyle="{StaticResource RightCell}" SortDirection="Descending"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </StackPanel>
 </UserControl>

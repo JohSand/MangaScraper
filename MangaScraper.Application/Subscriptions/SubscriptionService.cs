@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace MangaScraper.Application.Subscriptions {
-    public class SubscriptionService : ParserServiceBase {
+    public class SubscriptionService : ParserServiceBase, ISubscriptionService {
         private IReadOnlyDictionary<string, ISeriesParser> Parsers { get; }
 
         public SubscriptionService(IFileSystem fileSystem, IEnumerable<ISeriesParser> parsers)

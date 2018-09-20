@@ -27,29 +27,63 @@ namespace MangaScraper.Testing.Integration.Metadata {
         }
 
         [Fact]
-        public void TestMe() {
-            var parser = new HtmlParser();
-           
-            var list = new List<EventArgs>();
-            parser.Context.ParseError += (sender, ev) => list.Add(ev);
-
-            var doc = parser.Parse("error");
-            Assert.NotEmpty(list);
-        }
-
-        [Fact]
-        public void AllNumbers() {
+        public void Test1() {
             var k = new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser();
             var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "TestData")).GetFiles()
-                .First(f => f.Name.Contains("html"));
+                .First(f => f.Name.Contains("kakalot1.html"));
             var parser = new HtmlParser();
 
             using (var s = di.OpenRead()) {
                 var doc = parser.Parse(s);
                 var d = k.GetMetaData(doc);
-                Assert.NotNull(d);
                 Assert.Equal(Genre.Romance | Genre.SchoolLife | Genre.Shoujo, d.Genres);
                 Assert.Equal("Fujisaki Mao", d.Author);
+                Assert.NotEmpty(d.Blurb);
+            }
+        }
+
+        [Fact]
+        public void Test2() {
+            var k = new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser();
+            var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "TestData")).GetFiles()
+                .First(f => f.Name.Contains("kakalot2.html"));
+            var parser = new HtmlParser();
+
+            using (var s = di.OpenRead()) {
+                var doc = parser.Parse(s);
+                var d = k.GetMetaData(doc);
+                Assert.Equal("Inoue Sora", d.Author);
+                Assert.NotEmpty(d.Blurb);
+                Assert.Contains("Kunimitsu", d.Blurb);
+            }
+        }
+
+        [Fact]
+        public void Test3() {
+            var k = new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser();
+            var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "TestData")).GetFiles()
+                .First(f => f.Name.Contains("kakalot3.html"));
+            var parser = new HtmlParser();
+
+            using (var s = di.OpenRead()) {
+                var doc = parser.Parse(s);
+                var d = k.GetMetaData(doc);
+                Assert.Equal("OOKUBO Atsushi", d.Author);
+                Assert.NotEmpty(d.Blurb);
+            }
+        }
+
+        [Fact]
+        public void TestEden1() {
+            var k = new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser();
+            var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "TestData")).GetFiles()
+                .First(f => f.Name.Contains("eden1.html"));
+            var parser = new HtmlParser();
+
+            using (var s = di.OpenRead()) {
+                var doc = parser.Parse(s);
+                var d = k.GetMetaData(doc);
+                Assert.Equal("OHKUBO Atsushi", d.Author);
                 Assert.NotEmpty(d.Blurb);
             }
         }

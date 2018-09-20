@@ -45,6 +45,8 @@ namespace MangaScraper.UI.Bootstrap {
             builder.RegisterType<MemFile>().AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<MetaDataService>().AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<SubscriptionRepository>().AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<SubscriptionService>().AsImplementedInterfaces();
+            builder.RegisterType<SubscriptionScheduler>().AsImplementedInterfaces().SingleInstance();
 
 
 
