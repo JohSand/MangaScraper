@@ -18,11 +18,11 @@
 
 
         <StackPanel >
-            <Button Content="Create subscription" Margin="10" Height="40" cal:Message.Attach="Create" />
-            <TextBlock Margin="10" TextWrapping="Wrap">
+            <Button Content="Create subscription" Margin="10" Height="40" cal:Message.Attach="Create" Width="300" HorizontalAlignment="Left"/>
+            <TextBlock Margin="10" TextWrapping="Wrap" Width="300" HorizontalAlignment="Left">
                 Select the chapters you already have, and the new subscription will exclude them when looking for updates.
             </TextBlock>
-            <Border BorderBrush="Gainsboro" BorderThickness="1">
+            <Border BorderBrush="Gainsboro" BorderThickness="1" HorizontalAlignment="Left">
                 <DataGrid 
                       Style="{StaticResource AzureDataGrid}"
                       x:Name="Chapters"
