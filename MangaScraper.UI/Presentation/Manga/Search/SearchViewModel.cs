@@ -1,17 +1,16 @@
-﻿using Caliburn.Micro;
-using MangaScraper.Application.Services;
-using MangaScraper.Core.Scrapers;
-using MangaScraper.UI.Helpers;
-using MangaScraper.UI.Main;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Threading;
+using Caliburn.Micro;
+using MangaScraper.Application.Services;
+using MangaScraper.Core.Scrapers;
+using MangaScraper.UI.Helpers;
+using MangaScraper.UI.Main;
 
-namespace MangaScraper.UI.Presentation.Manga {
+namespace MangaScraper.UI.Presentation.Manga.Search {
     public class SearchViewModel : PropertyChangedBase {
         private IMangaIndex MangaIndex { get; }
         public ProviderSetViewModel.Factory Factory { get; }
@@ -21,7 +20,6 @@ namespace MangaScraper.UI.Presentation.Manga {
             Factory = factory;
             Genres = new GenresViewModel();
             Instances = this.OnPropertyChanges(s => s.SearchString)
-                .ObserveOn(Dispatcher.CurrentDispatcher)
                 .Throttle(TimeSpan.FromMilliseconds(500), DispatcherScheduler.Current)
                 .SelectTask(FindMangas)
                 .Merge(Genres.OnPropertyChanges(t => t.SelectedGenres).SelectTask(SelectedGenreChanged))
@@ -35,23 +33,22 @@ namespace MangaScraper.UI.Presentation.Manga {
             if (searchString.Length <= 3)
                 return new List<ProviderSetViewModel>();
             var mangas = await MangaIndex.FindMangas(searchString);
-            return mangas
-                .Where(m => m.MetaData.Genres.HasFlag(Genres.SelectedGenres))
-                .Take(20)
-                .Select(g => Factory(g))
-                .ToList();
+            return WrapMangas(mangas);
         }
 
         public async Task<List<ProviderSetViewModel>> FindMangasByArtist(string searchString) {
-            if (searchString.Length <= 6)
+            if (searchString.Length <= 4)
                 return new List<ProviderSetViewModel>();
             var mangas = await MangaIndex.FindMangasByArtist(searchString);
-            return mangas
+            return WrapMangas(mangas);
+        }
+
+        private List<ProviderSetViewModel> WrapMangas(IEnumerable<MangaInfo> mangas) => 
+            mangas
                 .Where(m => m.MetaData.Genres.HasFlag(Genres.SelectedGenres))
                 .Take(20)
                 .Select(g => Factory(g))
                 .ToList();
-        }
 
         public async Task<List<ProviderSetViewModel>> SelectedGenreChanged(Genre genre) {
             if ((SearchString?.Length ?? 0) > 3)

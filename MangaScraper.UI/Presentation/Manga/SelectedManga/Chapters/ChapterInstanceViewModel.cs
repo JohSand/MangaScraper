@@ -1,11 +1,10 @@
-﻿using MangaScraper.Application.Services;
+﻿using System.Collections.Generic;
+using System.Linq;
+using MangaScraper.Application.Services;
 using MangaScraper.UI.Helpers;
 using MangaScraper.UI.Presentation.Common;
-using MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace MangaScraper.UI.Presentation.Manga {
+namespace MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters {
     public class ChapterInstanceViewModel : ChapterInstances {
         public ChapterInstanceViewModel(IEnumerable<ChapterInstance> chapters) : base(chapters) => 
             SelectedRows.CollectionChanged += (s, e) => NotifyOfPropertyChange(() => CanDownloadSelected);

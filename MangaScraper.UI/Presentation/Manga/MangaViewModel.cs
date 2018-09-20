@@ -3,6 +3,7 @@ using System.Linq;
 using Caliburn.Micro;
 using MangaScraper.UI.Composition;
 using MangaScraper.UI.Helpers;
+using MangaScraper.UI.Presentation.Manga.Search;
 using Reactive.Bindings;
 
 namespace MangaScraper.UI.Presentation.Manga {

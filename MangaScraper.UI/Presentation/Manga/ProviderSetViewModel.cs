@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using MangaScraper.UI.Presentation.Manga.SelectedManga;
 using static System.Math;
 
 namespace MangaScraper.UI.Presentation.Manga {

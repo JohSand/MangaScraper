@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace MangaScraper.UI.Presentation.Manga {
+namespace MangaScraper.UI.Presentation.Manga.SelectedManga {
   /// <summary>
   /// Interaction logic for InstanceView.xaml
   /// </summary>

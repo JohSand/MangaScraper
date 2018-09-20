@@ -3,7 +3,7 @@ using Caliburn.Micro;
 using MangaScraper.Core.Scrapers;
 using MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters;
 
-namespace MangaScraper.UI.Presentation.Manga {
+namespace MangaScraper.UI.Presentation.Manga.SelectedManga {
     public class InstanceViewModel : PropertyChangedBase {
         public MetaData MetaData { get; set; }
 
