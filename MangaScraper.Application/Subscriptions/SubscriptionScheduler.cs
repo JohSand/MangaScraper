@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,7 +23,12 @@ namespace MangaScraper.Application.Subscriptions {
             async Task EventLoop() {
                 using (scheduler) {
                     while (!token.IsCancellationRequested) {
-                        await Work();
+                        try {
+                            await Work();
+                        }
+                        catch {
+                            //
+                        }
                         await Task.Delay(600 * 1000, token);
                     }
                 }
@@ -38,18 +45,24 @@ namespace MangaScraper.Application.Subscriptions {
 
 
         public async Task Work() {
-            var subscriptions = await _subscriptionRepository.GetSubscriptions();
-            var x = subscriptions.ToArray();
-            foreach (var sub in x) {
-                var missingChapters = await _subscriptionService.DownloadMissingChapters(sub);
-                //todo notify about downloaded chapters
-                var arg = new NewChaptersEventArgs(sub.Name, missingChapters);
-                NewChapters?.Invoke(this, arg);
-                if (missingChapters.Any()) {
-                    missingChapters.ForEach(s => sub.KnownChapters.Add(s));
-                    await _subscriptionRepository.Save(sub);
-                }
+            var subscriptions = await _subscriptionRepository.GetSubscriptions().ConfigureAwait(false);
+            var missingChapterEvents = await Task.WhenAll(subscriptions.Select(DownloadMissing)).ConfigureAwait(false);
+            foreach (var chapterEvent in missingChapterEvents) {
+             if(chapterEvent.Chapters.Any())   
+                 NewChapters?.Invoke(this, chapterEvent);
             }
+            
+        }
+
+        private async Task<NewChaptersEventArgs> DownloadMissing(SubscriptionItem sub) {
+            var missingChapters = await _subscriptionService.DownloadMissingChapters(sub).ConfigureAwait(false);
+
+            if (!missingChapters.Any()) 
+                return new NewChaptersEventArgs(sub.Name, missingChapters);
+
+            sub.KnownChapters.UnionWith(missingChapters);
+            await _subscriptionRepository.Save(sub).ConfigureAwait(false);
+            return new NewChaptersEventArgs(sub.Name, missingChapters);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MangaScraper.Core.Helpers {
     public static class Extensions {
+        public static ConcurrentDictionary<TKey, TValue> ToConcurrentDictionary<TKey, TValue>(this IEnumerable<TValue> source, Func<TValue, TKey> f) =>
+            new ConcurrentDictionary<TKey, TValue>(source.Select(i => new KeyValuePair<TKey, TValue>(f(i), i)));
+
         public static async Task Transform<TGrouping>(this IEnumerable<IGrouping<int, TGrouping>> source,
                                                           Func<TGrouping, Task> action,
                                                           IProgress<double> progress = null) {

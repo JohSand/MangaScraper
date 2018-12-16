@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaScraper.Application", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WixSharpInstaller", "WixSharpInstaller\WixSharpInstaller.csproj", "{44555887-C439-470C-944D-8866EC3D7067}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaScraper.Testing", "MangaScraper.Testing\MangaScraper.Testing.csproj", "{424C8956-3B35-4FC5-A721-3D58F8E18918}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaScraper.Testing", "MangaScraper.Testing\MangaScraper.Testing.csproj", "{424C8956-3B35-4FC5-A721-3D58F8E18918}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

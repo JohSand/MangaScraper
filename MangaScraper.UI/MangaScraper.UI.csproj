@@ -48,6 +48,9 @@
     <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="BespokeFusion, Version=1.0.1.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialMessageBox.1.0.0.11\lib\BespokeFusion.dll</HintPath>
+    </Reference>
     <Reference Include="Bindables, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Bindables.Fody.0.4.0\lib\net40\Bindables.dll</HintPath>
       <Private>False</Private>
@@ -66,6 +69,12 @@
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.1.1.2\lib\net45\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=2.0.0.638, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.2.0.0.638\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="MessagePack, Version=1.7.3.4, Culture=neutral, PublicKeyToken=b4a0369545f0a1be, processorArchitecture=MSIL">
       <HintPath>..\packages\MessagePack.1.7.3.4\lib\net47\MessagePack.dll</HintPath>

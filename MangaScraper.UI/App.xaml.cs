@@ -2,6 +2,7 @@
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using BespokeFusion;
 
 namespace MangaScraper.UI {
     /// <summary>
@@ -15,7 +16,7 @@ namespace MangaScraper.UI {
 
         private void AppDomainOnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs args) {
             var errorMessage = GetErrorText(args.Exception);
-            MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MaterialMessageBox.Show(errorMessage, "Error");
             args.Handled = true;
         }
 

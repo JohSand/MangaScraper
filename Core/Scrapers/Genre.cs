@@ -57,6 +57,7 @@ namespace MangaScraper.Core.Scrapers {
 
         private static Dictionary<string, Genre> CreateDictionary() {
             var dict = new Dictionary<string, Genre>();
+
             foreach (var genre in GetValues<Genre>() ) {
                 var enumString = genre.ToString();
                 dict.Add(enumString, genre);

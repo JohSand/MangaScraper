@@ -1,13 +1,13 @@
 ﻿using Autofac;
+using BespokeFusion;
 using MangaScraper.Application.Persistence;
 using MangaScraper.Application.Services;
 using MangaScraper.Application.Subscriptions;
-using MangaScraper.UI.Presentation.Manga;
-using MangaScraper.UI.Presentation.Manga.SelectedManga.Chapters;
 using MangaScraper.UI.Presentation.Shell;
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -56,7 +56,7 @@ namespace MangaScraper.UI.Bootstrap {
         private void AppDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs args) {
             if (args.ExceptionObject is Exception exception) {
                 var errorMessage = GetErrorText(exception);
-                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MaterialMessageBox.Show(errorMessage, "Error");
                 //exception.Handled = true;
             }
         }
@@ -69,15 +69,17 @@ namespace MangaScraper.UI.Bootstrap {
                                                               $"{exception.StackTrace}"
                                                               + Environment.NewLine + Environment.NewLine;
 
-            string GetErrorTextRec(Exception e, StringBuilder message) {
-                if (e == null) return message.ToString();
-                string errorMessage = FormatErrorMessage(ex);
-                message.Append(errorMessage);
-                return GetErrorTextRec(e.InnerException, message);
-            }
-
             var sb = new StringBuilder($"An unhandled exception occurred:");
-            return GetErrorTextRec(ex, sb);
+            var str = GetExceptions(ex).Aggregate(sb, (agg, curr) => agg.Append(FormatErrorMessage(curr)));
+            return str.ToString();
+        }
+
+        public static IEnumerable<Exception> GetExceptions(Exception e) {
+            while (true) {
+                if (e is null) yield break;
+                yield return e;
+                e = e.InnerException;
+            }
         }
 
 
@@ -85,12 +87,10 @@ namespace MangaScraper.UI.Bootstrap {
 
         protected override void BuildUp(object instance) => base.BuildUp(instance);
 
-        protected override void OnStartup(object sender, StartupEventArgs e) {
-            DisplayRootViewFor<ShellViewModel>(new Dictionary<string, object> {
-                ["WindowState"] = WindowState.Maximized,
-                ["SizeToContent"] = SizeToContent.Manual
-            });
-        }
+        protected override void OnStartup(object sender, StartupEventArgs e) => DisplayRootViewFor<ShellViewModel>(new Dictionary<string, object> {
+            ["WindowState"] = WindowState.Maximized,
+            ["SizeToContent"] = SizeToContent.Manual
+        });
 
         protected override void OnExit(object sender, EventArgs e) => base.OnExit(sender, e);
     }
