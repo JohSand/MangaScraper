@@ -4,8 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AngleSharp;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Parser;
 using MangaScraper.Application.Services;
 using MangaScraper.Core.Helpers;
 using MangaScraper.Core.Scrapers;
@@ -34,7 +33,7 @@ namespace MangaScraper.Testing.Integration.Metadata {
             var parser = new HtmlParser();
 
             using (var s = di.OpenRead()) {
-                var doc = parser.Parse(s);
+                var doc = parser.ParseDocument(s);
                 var d = k.GetMetaData(doc);
                 Assert.Equal(Genre.Romance | Genre.SchoolLife | Genre.Shoujo, d.Genres);
                 Assert.Equal("Fujisaki Mao", d.Author);
@@ -50,7 +49,7 @@ namespace MangaScraper.Testing.Integration.Metadata {
             var parser = new HtmlParser();
 
             using (var s = di.OpenRead()) {
-                var doc = parser.Parse(s);
+                var doc = parser.ParseDocument(s);
                 var d = k.GetMetaData(doc);
                 Assert.Equal("Inoue Sora", d.Author);
                 Assert.NotEmpty(d.Blurb);
@@ -66,7 +65,7 @@ namespace MangaScraper.Testing.Integration.Metadata {
             var parser = new HtmlParser();
 
             using (var s = di.OpenRead()) {
-                var doc = parser.Parse(s);
+                var doc = parser.ParseDocument(s);
                 var d = k.GetMetaData(doc);
                 Assert.Equal("OOKUBO Atsushi", d.Author);
                 Assert.NotEmpty(d.Blurb);
@@ -81,7 +80,7 @@ namespace MangaScraper.Testing.Integration.Metadata {
             var parser = new HtmlParser();
 
             using (var s = di.OpenRead()) {
-                var doc = parser.Parse(s);
+                var doc = parser.ParseDocument(s);
                 var d = k.GetMetaData(doc);
                 Assert.Equal("OHKUBO Atsushi", d.Author);
                 Assert.NotEmpty(d.Blurb);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AngleSharp.Dom.Html;
+using AngleSharp.Html.Dom;
 
 namespace MangaScraper.Core.Scrapers.Manga {
   public interface IMetaDataParser {

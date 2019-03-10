@@ -1,10 +1,11 @@
 ﻿using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
+using AngleSharp.Html.Dom;
 using MangaScraper.Core.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 
 namespace MangaScraper.Core.Scrapers.Manga.Eden {
     public struct SeriesParser : ISeriesParser, IMetaDataParser {

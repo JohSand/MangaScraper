@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom.Html;
+using AngleSharp.Html.Dom;
 using MangaScraper.Core.Helpers;
 
 namespace MangaScraper.Core.Scrapers.Manga.Kakalot {

@@ -3,8 +3,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
 
 namespace MangaScraper.Application.Services {
   public static class Client {
@@ -30,7 +30,7 @@ namespace MangaScraper.Application.Services {
     public static async Task<IHtmlDocument> GetDocumentAsync(string url) {
       using (var webResponse = await Get(url))
       using (var responseStream = await HandleResponse(webResponse)) {
-        return await HtmlParser.ParseAsync(responseStream).ConfigureAwait(false);
+        return await HtmlParser.ParseDocumentAsync(responseStream).ConfigureAwait(false);
       }
     }
 

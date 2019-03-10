@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom.Html;
+using AngleSharp.Html.Dom;
 
 namespace MangaScraper.Core.Scrapers.Manga {
   public delegate Task<IHtmlDocument> PageGetter(string url);
