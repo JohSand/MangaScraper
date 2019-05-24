@@ -26,10 +26,8 @@ namespace MangaScraper.UI.Presentation.Manga {
             Providers = mangaInfo.Instances.Select(t => new ProviderData { Provider = t.provider, Url = t.url }).ToBindableCollection();
             MetaData = mangaInfo.MetaData;
             var providerData = this
-                .OnPropertyChanges(s => s.SelectedProvider)
-                .Do(_ => IsLoading = true)
-                .SelectTask(a => GetProviderData(a.Provider, a.Url))
-                .Do(_ => IsLoading = false)
+                .OnPropertyChanges(s => s.SelectedProvider).Do(_ => IsLoading = true)
+                .SelectTask(a => GetProviderData(a.Provider, a.Url)).Do(_ => IsLoading = false)
                 .ObserveOnDispatcher();
 
             SelectedInstance =

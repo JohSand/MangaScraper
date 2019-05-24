@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Configuration;
 
 namespace MangaScraper.UI.Helpers {
     internal static class FolderDialog {

@@ -7,12 +7,8 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using Caliburn.Micro;
-using MangaScraper.Application.Services;
-using MangaScraper.Core.Helpers;
 using Reactive.Bindings;
-using static System.Math;
 
 namespace MangaScraper.UI.Helpers {
   public static class CaliburnExtensions {

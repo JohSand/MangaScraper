@@ -27,7 +27,7 @@ namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
 
         public async Task<IEnumerable<(string name, string url)>> ListInstances(PageGetter pageGetter, IProgress<double> progress = null) {
             var doc = await pageGetter("http://mangakakalot.com/manga_list?type=topview&category=all&state=all&page=1");
-            var groupPage = doc.GetElementsByClassName("group-page").First();
+            var groupPage = doc.GetElementsByClassName("group_page").First();
             var last = groupPage.Children.Last(c => c.LocalName == "a").TextContent.Replace("Last(", "").Replace(")", "");
             var max = int.Parse(last);
             return await Enumerable.Range(1, max)

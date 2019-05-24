@@ -4,7 +4,6 @@ using MangaScraper.UI.Composition;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace MangaScraper.UI.Presentation.Subscription {
     public class SubscriptionViewModel : Screen, IPrimaryScreen {
@@ -45,10 +44,10 @@ namespace MangaScraper.UI.Presentation.Subscription {
 
         public bool CanStart => Task is null;
 
-        public void Stop() {
+        public async void Stop() {
             _source.Cancel();
             try {
-                Task?.GetAwaiter().GetResult();
+                await Task;
             }
             catch (Exception e) when (e is TaskCanceledException) { }
             Task = null;

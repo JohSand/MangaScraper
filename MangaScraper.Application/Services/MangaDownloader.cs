@@ -1,5 +1,4 @@
-﻿using MangaScraper.Core.Helpers;
-using MangaScraper.Core.Scrapers.Manga;
+﻿using MangaScraper.Core.Scrapers.Manga;
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;

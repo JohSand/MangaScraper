@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:cal="http://www.caliburnproject.org"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+
 
              mc:Ignorable="d">
     <Grid>
@@ -20,27 +19,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Grid.ColumnSpan="3">
-            <Label
-                Margin="2"
-            x:Name="Name"
-            Height="40"
-            Foreground="White"
-            FontSize="14"
-            FontWeight="Heavy" />
-            <Label
-                Margin="2"
-            x:Name="Artist"
-            Height="40"
-            Foreground="White"
-            FontSize="14"
-            FontWeight="Heavy" />
-            <Label
-                Margin="2"
-            x:Name="Author"
-            Height="40"
-            Foreground="White"
-            FontSize="14"
-            FontWeight="Heavy" />
+            <Label Margin="2" x:Name="Name" Height="40" Foreground="White" FontSize="14" FontWeight="Heavy" />
+            <Label Margin="2" x:Name="Artist" Height="40" Foreground="White" FontSize="14" FontWeight="Heavy" />
+            <Label Margin="2" x:Name="Author" Height="40" Foreground="White" FontSize="14" FontWeight="Heavy" />
         </StackPanel>
 
         <Image
