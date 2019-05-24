@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using MangaScraper.Application.Services;
 using MangaScraper.Core.Helpers;
 using System.Collections.Generic;

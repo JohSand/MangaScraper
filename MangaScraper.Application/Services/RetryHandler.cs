@@ -23,7 +23,7 @@ namespace MangaScraper.Application.Services {
           res.EnsureSuccessStatusCode();
           return res;
         }
-        catch (HttpRequestException e) when (counter > 0) {
+        catch (HttpRequestException) when (counter > 0) {
           counter = counter - 1;
           await Task.Delay(TimeSpan.FromSeconds(Math.Pow(2, 5 - counter)), cancellationToken);
         }

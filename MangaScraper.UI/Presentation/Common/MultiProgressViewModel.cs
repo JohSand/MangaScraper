@@ -62,8 +62,10 @@ namespace MangaScraper.UI.Presentation.Common {
             [UsedImplicitly]
             public double Progress { get; set; }
 
+            [UsedImplicitly]
             public event PropertyChangedEventHandler PropertyChanged;
 
+            [UsedImplicitly]
             public AggregateException Exception { get; set; }
         }
     }

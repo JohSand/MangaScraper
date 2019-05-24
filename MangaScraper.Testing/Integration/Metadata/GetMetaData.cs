@@ -95,8 +95,7 @@ namespace MangaScraper.Testing.Integration.Metadata {
             await docs.Batch(50)
                 .Transform(async t => {
                         try {
-                            var d = k.GetMetaData(await Client.GetDocumentAsync(t.url));
-                            Assert.NotNull(d);
+                            k.GetMetaData(await Client.GetDocumentAsync(t.url));
                         }
                         catch (Exception e) {
                             Console.WriteLine(e);

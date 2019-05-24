@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Html.Dom;
 
 namespace MangaScraper.Core.Scrapers.Manga.Eden {
     public struct SeriesParser : ISeriesParser, IMetaDataParser {
@@ -24,10 +23,10 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
 
             var genres = (artist ?? rating).GetNextSiblingWithText("Genres");
             metaData.Genres = GetGenreATags(genres)
-              .Select(e => e.TextContent)
-              .Select(t => t.ParseAsGenre())
-              .Where(t => t != Genre.None)
-              .Merge();
+                .Select(e => e.TextContent)
+                .Select(t => t.ParseAsGenre())
+                .Where(t => t != Genre.None)
+                .Merge();
             return metaData;
         }
 
@@ -54,22 +53,23 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
         }
 
 
-
         private static async Task<IEnumerable<(string name, string url)>> GetMangaList(PageGetter doc, string url) {
             var page = await doc(url);
             return page
-              .GetElementById("mangaList")
-              .GetElementsByTagName("tbody")
-              .First()
-              .Elements("tr")
-              .Select(tr => tr.Element("td").Element("a"))
-              .Select(a => (a.TextContent, $"https://www.mangaeden.com{a.GetAttribute("href")}"));
+                .GetElementById("mangaList")
+                .GetElementsByTagName("tbody")
+                .First()
+                .Elements("tr")
+                .Select(tr => tr.Element("td").Element("a"))
+                .Select(a => (a.TextContent, $"https://www.mangaeden.com{a.GetAttribute("href")}"));
         }
 
-        public IEnumerable<string> ChapterUrls(IHtmlDocument doc) => doc.GetElementsByClassName("chapterLink").Select(a => $"https://www.mangaeden.com{a.GetAttribute("href")}").ToList();
+        public IEnumerable<string> ChapterUrls(IHtmlDocument doc) => doc.GetElementsByClassName("chapterLink")
+            .Select(a => $"https://www.mangaeden.com{a.GetAttribute("href")}")
+            .ToList();
 
         public string CoverUrl(IHtmlDocument doc) =>
-      $"https:{doc.GetElementsByClassName("mangaImage2").First().Element("img").GetAttribute("src")}";
+            $"https:{doc.GetElementsByClassName("mangaImage2").First().Element("img").GetAttribute("src")}";
 
         public IChapterParser CreateChapter(string url) => new ChapterParser(url);
     }

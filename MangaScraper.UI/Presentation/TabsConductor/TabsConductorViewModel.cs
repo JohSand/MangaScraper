@@ -1,30 +1,34 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 
-namespace MangaScraper.UI.Presentation.TabsConductor {
-  public class TabsConductorViewModel : Conductor<IScreen>.Collection.OneActive {
-    public TabsConductorViewModel(IEnumerable<IScreen> screens) {
-      Items.AddRange(screens);
-    }
+namespace MangaScraper.UI.Presentation.TabsConductor
+{
+    public class TabsConductorViewModel : Conductor<IScreen>.Collection.OneActive
+    {
+        public TabsConductorViewModel(IEnumerable<IScreen> screens)
+        {
+            Items.AddRange(screens);
+        }
 
-    //public void OpenTab() {
-    //  ActivateItem(new HelloViewModel {
-    //    DisplayName = "Tab "
-    //  });
-    //}
-    protected override void OnActivate() {
-      base.OnActivate();
+        //public void OpenTab() {
+        //  ActivateItem(new HelloViewModel {
+        //    DisplayName = "Tab "
+        //  });
+        //}
 
-    }
-    public override void ActivateItem(IScreen s) {
-      base.ActivateItem(s);
-      s.Activate();
-    }
-    protected override void OnDeactivate(bool close) {
-      base.OnDeactivate(close);
-    }
-    public bool IsCloseButtonVisible { get; set; }
+        public override async Task ActivateItemAsync(IScreen s, CancellationToken cancellationToken)
+        {
+            await base.ActivateItemAsync(s, cancellationToken);
+            await s.ActivateAsync(cancellationToken);
+        }
 
-    public void CloseItem(IScreen screen) { DeactivateItem(screen, true); }
-  }
+        public bool IsCloseButtonVisible { get; set; }
+
+        public async void CloseItem(IScreen screen)
+        {
+            await DeactivateItemAsync(screen, true, CancellationToken.None);
+        }
+    }
 }

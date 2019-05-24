@@ -41,8 +41,7 @@ namespace MangaScraper.UI.Presentation.Hello {
 
         public Task Task { get; set; }
 
-        protected override void OnActivate() {
-            base.OnActivate();
+        protected override Task OnActivateAsync(CancellationToken token) {
             var dispatcher = Dispatcher.CurrentDispatcher;
             var progress = new Progress<double>(d => Progress = d * 100);
             _metaDataService.ReportProgressFactory = context => {
@@ -53,6 +52,7 @@ namespace MangaScraper.UI.Presentation.Hello {
                 return progress;
                 //return new Progress<double>(d => dispatcher.Invoke(() =>  this.Test.Value = d));
             };
+            return Task.CompletedTask;
         }
 
 
@@ -62,13 +62,13 @@ namespace MangaScraper.UI.Presentation.Hello {
             _stopwatch.Reset();
         }
 
-
-        protected override void OnDeactivate(bool close) {
-            base.OnDeactivate(close);
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
             _metaDataService.ReportProgressFactory = null;
             _timer.Tick -= SetElapsed;
             _timer.Stop();
+            return Task.CompletedTask;
         }
+
         public void Start() => Task = Task ?? _metaDataService.Start(SelectedProvider, _source.Token);
 
         public bool CanStart => Task is null;

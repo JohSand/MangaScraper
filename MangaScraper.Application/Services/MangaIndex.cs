@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using MangaScraper.Application.Persistence;
-using MangaScraper.Core.Helpers;
 using MangaScraper.Core.Scrapers;
 using MangaScraper.Core.Scrapers.Manga;
 
