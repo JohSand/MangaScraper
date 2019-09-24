@@ -2,13 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cal="http://www.caliburnproject.org"
-             >
+             xmlns:micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform">
     <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="2*" />
     </Grid.ColumnDefinitions>
     <ContentControl x:Name="SearchViewModel"  Grid.Column="0" Margin="5,0,0,0"/>
-    <ContentControl cal:View.Model="{Binding ProviderSetViewModel.Value}"  Grid.Column="1"/>
+    <ContentControl micro:View.Model="{Binding ProviderSetViewModel.Value}"  Grid.Column="1"/>
   </Grid>
 </UserControl>

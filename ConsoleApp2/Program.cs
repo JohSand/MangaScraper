@@ -1,7 +1,7 @@
-﻿using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
-using MangaScraper.Application.Persistence;
+﻿using MangaScraper.Application.Persistence;
 using MangaScraper.Application.Services;
+using MangaScraper.Core.Scrapers;
+using MangaScraper.Core.Scrapers.Manga;
 using ShellProgressBar;
 using System;
 using System.Collections.Generic;
@@ -12,11 +12,27 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+using CloudFlareUtilities;
 
 
-namespace MangaScraper.Core.Scrapers.Manga {
-    internal class Program {
-        private static async Task<int> Main(string[] args) {
+namespace ConsoleApp2
+{
+    using Eden = MangaScraper.Core.Scrapers.Manga.Eden;
+    using Kakalot = MangaScraper.Core.Scrapers.Manga.Kakalot;
+    using Panda = MangaScraper.Core.Scrapers.Manga.Panda;
+
+    internal class Program
+    {
+        private static async Task<int> Main(string[] args)
+        {
+            var c = new HttpClient(new ClearanceHandler())
+            {
+                DefaultRequestVersion = new Version(2, 0)
+            };
+            var resp = await c.GetAsync("https://www.funmanga.com/");
+            var content = await resp.Content.ReadAsStringAsync();
             //await Download();
             //await TestKakalot();
             await UpdateMetaData(new Eden.SeriesParser());
@@ -31,8 +47,10 @@ namespace MangaScraper.Core.Scrapers.Manga {
         }
 
 
-        private static async Task TestKakalot() {
-            var options = new ProgressBarOptions {
+        private static async Task TestKakalot()
+        {
+            var options = new ProgressBarOptions
+            {
                 ForegroundColor = ConsoleColor.Yellow,
                 BackgroundColor = ConsoleColor.DarkYellow,
                 ProgressCharacter = '─'
@@ -40,18 +58,22 @@ namespace MangaScraper.Core.Scrapers.Manga {
             var mrg = new MangaDownloader(new FileSystem(), new List<ISeriesParser> { });
 
 
-            for (int i = 4; i < 9; i++) {
+            for (int i = 4; i < 9; i++)
+            {
                 var url = $"http://mangakakalot.com/chapter/goblin_slayer_side_story_year_one/chapter_{i}";
                 var chapterParser = new Kakalot.ChapterParser(url);
 
-                using (var pb = new ConsoleProgress(options)) {
+                using (var pb = new ConsoleProgress(options))
+                {
                     await mrg.DownloadChapterTo(chapterParser, @"C:\Pile\Test", pb);
                 }
             }
         }
 
-        private static async Task UpdateMetaData(IMetaDataParser parser) {
-            var options = new ProgressBarOptions {
+        private static async Task UpdateMetaData(IMetaDataParser parser)
+        {
+            var options = new ProgressBarOptions
+            {
                 ForegroundColor = ConsoleColor.Yellow,
                 BackgroundColor = ConsoleColor.DarkYellow,
                 ProgressCharacter = '─'
@@ -65,11 +87,13 @@ namespace MangaScraper.Core.Scrapers.Manga {
             var first = true;
             ConsoleProgress pb = null;
 
-            IProgress<double> GetProgress(string context) {
+            IProgress<double> GetProgress(string context)
+            {
                 pb?.Dispose();
                 if (first)
                     first = false;
-                else {
+                else
+                {
                     Console.WriteLine();
                     Console.WriteLine();
                 }
@@ -82,8 +106,10 @@ namespace MangaScraper.Core.Scrapers.Manga {
             await metaData.DownloadMetaData(parser.ProviderName, CancellationToken.None);
         }
 
-        private static async Task Populate(params ISeriesParser[] parser) {
-            var options = new ProgressBarOptions {
+        private static async Task Populate(params ISeriesParser[] parser)
+        {
+            var options = new ProgressBarOptions
+            {
                 ForegroundColor = ConsoleColor.Yellow,
                 BackgroundColor = ConsoleColor.DarkYellow,
                 ProgressCharacter = '─'
@@ -97,11 +123,13 @@ namespace MangaScraper.Core.Scrapers.Manga {
             var first = true;
             ConsoleProgress pb = null;
 
-            IProgress<double> GetProgress(string context) {
+            IProgress<double> GetProgress(string context)
+            {
                 pb?.Dispose();
                 if (first)
                     first = false;
-                else {
+                else
+                {
                     Console.WriteLine();
                     Console.WriteLine();
                 }
@@ -109,10 +137,12 @@ namespace MangaScraper.Core.Scrapers.Manga {
                 return pb = new ConsoleProgress(options, context);
             }
 
-            try {
+            try
+            {
                 await index.Update(GetProgress);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine(e.Message);
             }
             //res = await Task.WhenAll(manager.Providers.Select(p => manager.ListInstances(p, pb).ContinueWith(t => (t.Result, provider: p))));
@@ -122,8 +152,10 @@ namespace MangaScraper.Core.Scrapers.Manga {
             //MyDictionary = new AsyncLazy<Dictionary<string, MangaInfo>>(CreateDictionary);
         }
 
-        private static async Task GetMetaData(IMetaDataParser parser) {
-            var options = new ProgressBarOptions {
+        private static async Task GetMetaData(IMetaDataParser parser)
+        {
+            var options = new ProgressBarOptions
+            {
                 ForegroundColor = ConsoleColor.Yellow,
                 BackgroundColor = ConsoleColor.DarkYellow,
                 ProgressCharacter = '─'
@@ -140,15 +172,18 @@ namespace MangaScraper.Core.Scrapers.Manga {
 
             var wasCalled = false;
 
-            IProgress<double> GetProgress(string context) {
-                if (context == "Instances" && !wasCalled) {
+            IProgress<double> GetProgress(string context)
+            {
+                if (context == "Instances" && !wasCalled)
+                {
                     wasCalled = true;
                     Console.WriteLine($"Handling {context}");
                     Console.WriteLine();
                     return new ConsoleProgress(options, context);
                 }
 
-                if (context == "MetaData") {
+                if (context == "MetaData")
+                {
                     Console.WriteLine();
                     Console.WriteLine();
                     Console.WriteLine($"Handling {context}");
@@ -163,18 +198,22 @@ namespace MangaScraper.Core.Scrapers.Manga {
             service.ReportProgressFactory = GetProgress;
             var t = service.Start(parser.ProviderName, cts.Token);
 
-            try {
+            try
+            {
                 await t;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine(e.Message);
             }
 
             var res2 = await service.GetMetaData();
             var test = res2.Where(a => a.metaData.Genres.HasFlag(Genre.MartialArts)).ToList();
             var unused = Enum.GetValues(typeof(Genre)).Cast<Genre>().Where(e => e != Genre.None).ToDictionary(g => g, _ => false);
-            foreach (var valueTuple in res2) {
-                foreach (var genre in valueTuple.metaData.Genres.Split()) {
+            foreach (var valueTuple in res2)
+            {
+                foreach (var genre in valueTuple.metaData.Genres.Split())
+                {
                     if (unused.ContainsKey(genre))
                         unused[genre] = true;
                 }
@@ -184,8 +223,10 @@ namespace MangaScraper.Core.Scrapers.Manga {
             Console.Read();
         }
 
-        private static async Task Download() {
-            var options = new ProgressBarOptions {
+        private static async Task Download()
+        {
+            var options = new ProgressBarOptions
+            {
                 ForegroundColor = ConsoleColor.Yellow,
                 BackgroundColor = ConsoleColor.DarkYellow,
                 ProgressCharacter = '─'
@@ -208,7 +249,8 @@ namespace MangaScraper.Core.Scrapers.Manga {
 
         }
 
-        private class ConsoleProgress : IProgress<double>, IDisposable {
+        private class ConsoleProgress : IProgress<double>, IDisposable
+        {
             private readonly ProgressBar _bar;
 
             public ConsoleProgress(ProgressBarOptions options, string context = "test") => _bar = new ProgressBar(100, context, options);
@@ -220,18 +262,21 @@ namespace MangaScraper.Core.Scrapers.Manga {
             public void Dispose() => _bar?.Dispose();
         }
     }
-    public static class Client2 {
+    public static class Client2
+    {
         //todo proper cache with timeout?
         // private static readonly MemoryCache MemoryCache = new MemoryCache("documentCache");
         private static HttpClient HttpClient { get; } = new HttpClient(new RetryHandler());
         private static HtmlParser HtmlParser { get; } = new HtmlParser();
 
-        public static async Task DownloadToStream(this Stream fs, string url) {
+        public static async Task DownloadToStream(this Stream fs, string url)
+        {
             var fst = await HttpClient.GetStreamAsync(url);
             await fst.CopyToAsync(fs);
         }
 
-        public static async Task<IHtmlDocument> GetCachedDocumentAsync(string url) {
+        public static async Task<IHtmlDocument> GetCachedDocumentAsync(string url)
+        {
             //if (MemoryCache.Contains(url))
             //  return MemoryCache.Get(url) as IHtmlDocument;
             var doc = await GetDocumentAsync(url);
@@ -240,15 +285,19 @@ namespace MangaScraper.Core.Scrapers.Manga {
             return doc;
         }
 
-        public static async Task<IHtmlDocument> GetDocumentAsync(string url) {
+        public static async Task<IHtmlDocument> GetDocumentAsync(string url)
+        {
             using (var webResponse = await Get(url))
-            using (var responseStream = await HandleResponse(webResponse)) {
-                return await HtmlParser.ParseAsync(responseStream).ConfigureAwait(false);
+            using (var responseStream = await HandleResponse(webResponse))
+            {
+                return await HtmlParser.ParseDocumentAsync(responseStream).ConfigureAwait(false);
             }
         }
 
-        private static async Task<HttpResponseMessage> Get(string url) {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, url)) {
+        private static async Task<HttpResponseMessage> Get(string url)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            {
                 var resp = await HttpClient.SendAsync(request);
                 resp.EnsureSuccessStatusCode();
                 return resp;
@@ -256,7 +305,8 @@ namespace MangaScraper.Core.Scrapers.Manga {
         }
 
 
-        private static async Task<Stream> HandleResponse(HttpResponseMessage webResponse) {
+        private static async Task<Stream> HandleResponse(HttpResponseMessage webResponse)
+        {
             var stream = await webResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
             return webResponse.Content.Headers.ContentEncoding.Contains("gzip")
                 ? new GZipStream(stream, CompressionMode.Decompress)

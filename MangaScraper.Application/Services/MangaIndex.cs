@@ -6,8 +6,10 @@ using MangaScraper.Application.Persistence;
 using MangaScraper.Core.Scrapers;
 using MangaScraper.Core.Scrapers.Manga;
 
-namespace MangaScraper.Application.Services {
-    public class MangaIndex : IMangaIndex {
+namespace MangaScraper.Application.Services
+{
+    public class MangaIndex : IMangaIndex
+    {
         private readonly IMangaDownloader _manager;
         private readonly IMetaDataRepository _metaDataService;
         private readonly IMemCache _memCache;
@@ -15,7 +17,8 @@ namespace MangaScraper.Application.Services {
         private Task<MangaInfo[]> MyDictionary { get; set; }
 
 
-        public MangaIndex(IMangaDownloader manager, IMetaDataRepository metaDataService, IMemCache memCache) {
+        public MangaIndex(IMangaDownloader manager, IMetaDataRepository metaDataService, IMemCache memCache)
+        {
             _manager = manager;
             _metaDataService = metaDataService;
             _memCache = memCache;
@@ -23,7 +26,8 @@ namespace MangaScraper.Application.Services {
             //todo
         }
 
-        private async Task<MangaInfo[]> CreateDictionary() {
+        private async Task<MangaInfo[]> CreateDictionary()
+        {
             var mangaData = await _memCache.GetAsync();
             var metaData = await _metaDataService.GetMetaData();
             var metaDataDict = metaData.Where(m => !string.IsNullOrEmpty(m.name))
@@ -33,7 +37,8 @@ namespace MangaScraper.Application.Services {
 
             var dict = mangaData //
                 .GroupBy(t => t.name, t => (t.provider, t.url))
-                .Select(g => new MangaInfo {
+                .Select(g => new MangaInfo
+                {
                     Name = g.Key,
                     Instances = g.ToList(),
                     MetaData = metaDataDict.ContainsKey(g.Key) ? metaDataDict[g.Key] : default
@@ -43,7 +48,8 @@ namespace MangaScraper.Application.Services {
         }
 
 
-        public async Task<IEnumerable<MangaInfo>> FindMangas(Genre genres) {
+        public async Task<IEnumerable<MangaInfo>> FindMangas(Genre genres)
+        {
             //todo index, store to disk, etc
             var dict = await MyDictionary;
             return dict
@@ -52,7 +58,8 @@ namespace MangaScraper.Application.Services {
                 .ToList();
         }
 
-        public async Task<IEnumerable<MangaInfo>> FindMangas(string name) {
+        public async Task<IEnumerable<MangaInfo>> FindMangas(string name)
+        {
             //todo index, store to disk, etc
             var dict = await MyDictionary;
             return dict
@@ -61,7 +68,8 @@ namespace MangaScraper.Application.Services {
                 .ToList();
         }
 
-        public async Task<IEnumerable<MangaInfo>> FindMangasByArtist(string artist) {
+        public async Task<IEnumerable<MangaInfo>> FindMangasByArtist(string artist)
+        {
             //todo index, store to disk, etc
             var dict = await MyDictionary;
             return dict
@@ -76,9 +84,11 @@ namespace MangaScraper.Application.Services {
 
         public Task Update() => Update(null);
 
-        public async Task Update(GetProgress factory) {
+        public async Task Update(GetProgress factory)
+        {
             var result = new List<(IEnumerable<(string name, string url)> data, string provider)>(_manager.Providers.Count());
-            foreach (var provider in _manager.Providers) {
+            foreach (var provider in _manager.Providers)
+            {
                 var data = await _manager.ListInstances(provider, factory?.Invoke(provider));
                 result.Add((data, provider));
             }
@@ -92,16 +102,20 @@ namespace MangaScraper.Application.Services {
             //todo create index, store to disk, etc
         }
 
-        public async Task<string> GetCoverUrl(string provider, string url) {
-            try {
+        public async Task<string> GetCoverUrl(string provider, string url)
+        {
+            try
+            {
                 return await _manager.CoverUrl(provider, url);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return string.Empty;
             }
         }
 
-        public Task<IEnumerable<IChapterParser>> Chapters(string provider, string url) {
+        public Task<IEnumerable<IChapterParser>> Chapters(string provider, string url)
+        {
             return _manager.ChapterParsers(provider, url);
         }
 
