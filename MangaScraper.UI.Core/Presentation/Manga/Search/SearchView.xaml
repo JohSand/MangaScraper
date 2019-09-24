@@ -1,0 +1,69 @@
+﻿<Grid
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    x:Class="MangaScraper.UI.Core.Presentation.Manga.Search.SearchView"
+    mc:Ignorable="d">
+
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="120" />
+        <ColumnDefinition Width="230" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="100" />
+        <RowDefinition Height="100" />
+        <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Button
+        Content="Update scrapers"
+        Height="28"
+        cal:Message.Attach="UpdateButton_Click()"
+        Grid.Row="0" Grid.Column="0" />
+    
+    <ContentControl
+        Grid.Row="0" Grid.Column="1"
+        x:Name="Genres"
+        Width="140"
+        Height="100" />
+    
+    <TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <TabItem Header="Name">
+            <TextBox
+                HorizontalAlignment="Left"
+            Height="28"
+            TextWrapping="Wrap"
+            Width="150"
+            x:Name="SearchString"/>
+        </TabItem>
+        <TabItem Header="Artist">
+            <TextBox
+                HorizontalAlignment="Left"
+            Height="28"
+            TextWrapping="Wrap"
+            Width="150"
+            x:Name="ArtistSearchString"/>
+        </TabItem>
+    </TabControl>
+
+    <DataGrid
+        Grid.Row="2"
+        Grid.Column="0"
+        Grid.ColumnSpan="2"
+        HeadersVisibility="Column"
+        x:Name="Instances"
+        AutoGenerateColumns="False"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top"
+        Width="300"
+        Height="450"
+        SelectionMode="Single">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+        </DataGrid.Columns>
+    </DataGrid>
+
+</Grid>

@@ -75,8 +75,7 @@ namespace MangaScraper.UI.Bootstrap {
         }
 
         public static IEnumerable<Exception> GetExceptions(Exception e) {
-            while (true) {
-                if (e is null) yield break;
+            while (e != null) {
                 yield return e;
                 e = e.InnerException;
             }

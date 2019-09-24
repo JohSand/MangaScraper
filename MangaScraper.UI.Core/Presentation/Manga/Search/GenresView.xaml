@@ -1,0 +1,16 @@
+﻿<Grid x:Class="MangaScraper.UI.Core.Presentation.Manga.Search.GenresView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:cal="http://www.caliburnproject.org"
+      xmlns:main="clr-namespace:MangaScraper.UI.Core.Main"
+      mc:Ignorable="d">
+
+  <main:MultiSelectComboBox Width="140" Height="40" 
+                            ItemsSource="{Binding Path=Items}"
+                            SelectedItems="{Binding Path=SelectedItems, Mode=TwoWay}"
+                            ToolTip="{Binding Path=Text, RelativeSource={RelativeSource Self}}"
+                            />
+  <TextBox Text="To test transparent" Margin="208,180,209,110" Width="100" Height="30" />
+</Grid>
