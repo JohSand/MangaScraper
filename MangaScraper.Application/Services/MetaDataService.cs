@@ -1,6 +1,7 @@
 ﻿using MangaScraper.Core.Helpers;
 using MangaScraper.Core.Scrapers;
 using MangaScraper.Core.Scrapers.Manga;
+using MessagePack;
 using MessagePack.Resolvers;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,8 @@ using static System.IO.Path;
 namespace MangaScraper.Application.Services {
     public class MetaDataService : IMetaDataRepository, IMetaDataService {
         private static string DirectoryPath => Combine(GetFolderPath(SpecialFolder.ApplicationData), "MangaScraper");
-
+        private readonly MessagePackSerializerOptions _opts =  
+            MessagePackSerializerOptions.Standard.WithResolver(ContractlessStandardResolver.Instance);
         public MetaDataService(ICollection<IMetaDataParser> metaDataParsers, PageGetter getter) {
             MetaDataParsers = metaDataParsers.ToDictionary(p => p.ProviderName);
 
@@ -115,7 +117,8 @@ namespace MangaScraper.Application.Services {
 
 
         private async Task WriteToDisk((string, MetaData)[] msg) {
-            var arr = Serialize(msg, ContractlessStandardResolver.Instance);
+            //T value, MessagePackSerializerOptions options = null, CancellationToken cancellationToken = default
+            var arr = Serialize(msg, _opts);
             using (var mmf = MemoryMappedFile.CreateFromFile(Path, FileMode.Create, null, arr.Length))
             using (var vs = mmf.CreateViewStream()) {
                 await vs.WriteAsync(arr, 0, arr.Length).ConfigureAwait(false);
@@ -125,7 +128,7 @@ namespace MangaScraper.Application.Services {
         private async Task<(string, MetaData)[]> ReadFromDisk() {
             using (var mmf = MemoryMappedFile.CreateFromFile(Path, FileMode.Open))
             using (var vs = mmf.CreateViewStream()) {
-                return await DeserializeAsync<(string, MetaData)[]>(vs, ContractlessStandardResolver.Instance).ConfigureAwait(false);
+                return await DeserializeAsync<(string, MetaData)[]>(vs, _opts).ConfigureAwait(false);
             }
         }
     }
