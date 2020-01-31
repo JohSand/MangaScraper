@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
 using MangaScraper.Application.Services;
@@ -31,24 +33,47 @@ namespace MangaScraper.UI.Core.Presentation.Manga {
 
             SelectedInstance =
                 providerData
-                .Select(vt => CreateInstanceViewModel(vt.coverUrl, new ChapterInstanceViewModel(vt.chapters)))
+                .SelectTask(vt => CreateInstanceViewModelAsync(vt.coverUrl, new ChapterInstanceViewModel(vt.chapters)))
                 .ToReactiveProperty();
 
             Test =
                 providerData
-                .Select(vt => CreateInstanceViewModel(vt.coverUrl, SubscriptionFactory((Name, SelectedProvider), vt.chapters)))
+                .SelectTask(vt => CreateInstanceViewModelAsync(vt.coverUrl, SubscriptionFactory((Name, SelectedProvider), vt.chapters)))
                 .ToReactiveProperty();
 
             SelectedInstance
                 .Subscribe(x => x?.ChapterInstanceViewModel.SelectedRows.Clear());
         }
 
-        private InstanceViewModel CreateInstanceViewModel(string coverUrl, ChapterInstances c) => new InstanceViewModel {
-            Cover = string.IsNullOrEmpty(coverUrl) ? null : new BitmapImage(new Uri(coverUrl)),
-            ChapterInstanceViewModel = c,
-            Name = Name,
-            MetaData = MetaData
-        };
+        private async Task<InstanceViewModel> CreateInstanceViewModelAsync(string coverUrl, ChapterInstances c)
+        {
+            if(string.IsNullOrEmpty(coverUrl))
+                return new InstanceViewModel
+                {
+                    Cover = null,
+                    ChapterInstanceViewModel = c,
+                    Name = Name,
+                    MetaData = MetaData
+                };
+
+            //var cover = string.IsNullOrEmpty(url) ? null : new BitmapImage(new Uri(url));
+            var cover = new BitmapImage();
+            // Set Image.Source  
+            await using var stream = new MemoryStream();
+            await stream.DownloadToStream(coverUrl);
+            stream.Position = 0;
+            cover.BeginInit();
+            cover.StreamSource = stream;
+            cover.CacheOption = BitmapCacheOption.OnLoad;
+            cover.EndInit();
+            return new InstanceViewModel
+            {
+                Cover = cover,
+                ChapterInstanceViewModel = c,
+                Name = Name,
+                MetaData = MetaData
+            };
+        }
 
         private async Task<(IEnumerable<ChapterInstance> chapters, string coverUrl)> GetProviderData(string provider, string url) {
             var coverUrl = await _mangaIndex.GetCoverUrl(provider, url).ConfigureAwait(false);

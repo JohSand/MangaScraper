@@ -59,15 +59,32 @@ namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
         }
 
         public IEnumerable<string> ChapterUrls(IHtmlDocument doc) {
-            var chapterList = doc.GetElementsByClassName("chapter-list").First();
-            return chapterList.Elements("div").Select(d => d.Element("span").Element("a").GetAttribute("href")).ToList();
+            var chapterList = doc.GetElementsByClassName("chapter-list").FirstOrDefault();
+            if (chapterList is {})
+            {
+                return chapterList.Elements("div").Select(d => d.Element("span").Element("a").GetAttribute("href")).ToList();
+            }
+            else
+            {
+                var c = doc.GetElementsByClassName("row-content-chapter").First();
+                return c.Elements("li").Select(d => d.Element("a").GetAttribute("href")).ToList();
+            }
         }
 
         public string CoverUrl(IHtmlDocument doc) {
-            var pic = doc.GetElementsByClassName("manga-info-pic").First();
-            var img = pic.Element("img");
-            var src = img.GetAttribute("src");
-            return src;
+            var pic = doc.GetElementsByClassName("manga-info-pic").FirstOrDefault();
+            if (pic is {})
+            {
+                var img = pic.Element("img");
+                var src = img.GetAttribute("src");
+                return src;
+            }
+            else
+            {
+                var p = doc.GetElementsByClassName("info-image").First();
+                var src = p.Element("img").GetAttribute("src");
+                return src;
+            }
         }
 
         public IChapterParser CreateChapter(string url) => new ChapterParser(url);

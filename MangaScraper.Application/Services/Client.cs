@@ -12,7 +12,7 @@ namespace MangaScraper.Application.Services
     {
         //todo proper cache with timeout?
         // private static readonly MemoryCache MemoryCache = new MemoryCache("documentCache");
-        private static HttpClient HttpClient { get; } = new HttpClient(new RetryHandler(new CloudFlareUtilities.ClearanceHandler()));
+        private static HttpClient HttpClient { get; } = new HttpClient(new RetryHandler(new CloudflareSolverRe.ClearanceHandler()));
         private static HtmlParser HtmlParser { get; } = new HtmlParser();
 
         public static async Task DownloadToStream(this Stream fs, string url)
@@ -42,7 +42,7 @@ namespace MangaScraper.Application.Services
 
         private static async Task<HttpResponseMessage> Get(string url)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, url) { Version = new Version(1, 1) })
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url) { Version = new Version(2, 0) })
             {
                 var resp = await HttpClient.SendAsync(request);
                 resp.EnsureSuccessStatusCode();

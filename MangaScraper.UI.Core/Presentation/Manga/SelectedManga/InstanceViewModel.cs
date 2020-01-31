@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Caliburn.Micro;
 using MangaScraper.Core.Scrapers;
 using MangaScraper.UI.Core.Presentation.Manga.SelectedManga.Chapters;

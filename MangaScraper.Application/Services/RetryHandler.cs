@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,11 @@ namespace MangaScraper.Application.Services {
       while (true) {
         try {
           var res = await base.SendAsync(request, cancellationToken);
+          if (res.StatusCode == HttpStatusCode.MovedPermanently)
+          {
+              request.RequestUri = new Uri(res.Headers.Location.AbsoluteUri);
+              res = await base.SendAsync(request, cancellationToken);
+          }
           res.EnsureSuccessStatusCode();
           return res;
         }

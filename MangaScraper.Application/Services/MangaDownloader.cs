@@ -26,7 +26,8 @@ namespace MangaScraper.Application.Services {
 
         public async Task<IEnumerable<IChapterParser>> ChapterParsers(string provider, string url) {
             var parser = Parsers[provider];
-            return parser.ChapterUrls(await PageGetter(url)).Select(parser.CreateChapter);
+            var page = await PageGetter(url);
+            return parser.ChapterUrls(page).Select(parser.CreateChapter);
         }
     }
 }
