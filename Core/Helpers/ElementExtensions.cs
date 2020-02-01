@@ -23,9 +23,9 @@ namespace MangaScraper.Core.Helpers {
 
     public static bool HasClass(this IElement e, string typeName) => e.ClassList.Contains(typeName);
 
-    public static IElement GetFirstChildByType(this IElement e, string typeName) => e.GetFirstChild(c => c.LocalName == typeName);
+    public static IElement GetFirstChildByType(this IElement e, string typeName) => e?.GetFirstChild(c => c.LocalName == typeName);
 
-    public static IElement GetFirstChild(this IElement e, Predicate<IElement> p) => e.Children.First(c => p(c));
+    public static IElement GetFirstChild(this IElement e, Predicate<IElement> p) => e?.Children.FirstOrDefault(c => p(c));
 
   }
 }

@@ -48,7 +48,7 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
             var max = int.Parse(secondLast.TextContent);
             return await Enumerable.Range(1, max)
                 .Select(i => $"https://www.mangaeden.com/en/en-directory/?page={i}")
-                .Batch(4)
+                .Batch(20)
                 .Transform(u => GetMangaList(pageGetter, u), progress);
         }
 
@@ -64,9 +64,13 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
                 .Select(a => (a.TextContent, $"https://www.mangaeden.com{a.GetAttribute("href")}"));
         }
 
-        public IEnumerable<string> ChapterUrls(IHtmlDocument doc) => doc.GetElementsByClassName("chapterLink")
-            .Select(a => $"https://www.mangaeden.com{a.GetAttribute("href")}")
-            .ToList();
+        public IEnumerable<string> ChapterUrls(IHtmlDocument doc)
+        {
+            if (doc is null) return Array.Empty<string>();
+            return doc.GetElementsByClassName("chapterLink")
+                .Select(a => $"https://www.mangaeden.com{a.GetAttribute("href")}")
+                .ToList();
+        }
 
         public string CoverUrl(IHtmlDocument doc) =>
             $"https:{doc.GetElementsByClassName("mangaImage2").First().Element("img").GetAttribute("src")}";

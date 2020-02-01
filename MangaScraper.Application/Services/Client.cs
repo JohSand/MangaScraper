@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
@@ -33,11 +34,12 @@ namespace MangaScraper.Application.Services
 
         public static async Task<IHtmlDocument> GetDocumentAsync(string url)
         {
-            using (var webResponse = await Get(url))
-            using (var responseStream = await HandleResponse(webResponse))
-            {
-                return await HtmlParser.ParseDocumentAsync(responseStream).ConfigureAwait(false);
-            }
+            using var webResponse = await Get(url);
+            if (webResponse.StatusCode == HttpStatusCode.NotFound)
+                return null;
+            webResponse.EnsureSuccessStatusCode();
+            using var responseStream = await HandleResponse(webResponse);
+            return await HtmlParser.ParseDocumentAsync(responseStream).ConfigureAwait(false);
         }
 
         private static async Task<HttpResponseMessage> Get(string url)
@@ -45,7 +47,6 @@ namespace MangaScraper.Application.Services
             using (var request = new HttpRequestMessage(HttpMethod.Get, url) { Version = new Version(2, 0) })
             {
                 var resp = await HttpClient.SendAsync(request);
-                resp.EnsureSuccessStatusCode();
                 return resp;
             }
         }

@@ -26,7 +26,9 @@ namespace MangaScraper.Application.Services {
               request.RequestUri = new Uri(res.Headers.Location.AbsoluteUri);
               res = await base.SendAsync(request, cancellationToken);
           }
-          res.EnsureSuccessStatusCode();
+
+          if ((int) res.StatusCode > 500)
+              res.EnsureSuccessStatusCode();//meh
           return res;
         }
         catch (HttpRequestException) when (counter > 0) {

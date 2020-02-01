@@ -19,7 +19,7 @@ namespace MangaScraper.Core.Scrapers.Manga.Eden {
 
     public async Task<int> GetPageCount(PageGetter getPage) {
       var page = await getPage(Url);
-      return page.GetElementById("pageSelect").Elements("option").Count();
+      return page?.GetElementById("pageSelect").Elements("option").Count() ?? 0;
     }
 
     public string Url { get; }
