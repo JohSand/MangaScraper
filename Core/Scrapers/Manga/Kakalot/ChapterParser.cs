@@ -12,8 +12,9 @@ namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
 
     public async Task<string> GetImageUrl(int pageNumber, PageGetter getPage) {
       var doc = await getPage(Url);
-      return doc
-        .GetElementById("vungdoc")
+      var container = doc
+          .GetElementById("vungdoc") ?? doc.GetElementsByClassName("container-chapter-reader").First();
+      return container
         .Children
         .Where(c => c.LocalName == "img")
         .Skip(pageNumber - 1)
@@ -23,7 +24,7 @@ namespace MangaScraper.Core.Scrapers.Manga.Kakalot {
 
     public async Task<int> GetPageCount(PageGetter getPage) {
       var doc = await getPage(Url);
-      var vungdoc = doc.GetElementById("vungdoc");
+      var vungdoc = doc.GetElementById("vungdoc") ?? doc.GetElementsByClassName("container-chapter-reader").First();
       return vungdoc.Children.Count(c => c.LocalName == "img");
     }
 
