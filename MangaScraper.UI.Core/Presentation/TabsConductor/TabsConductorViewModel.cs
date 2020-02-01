@@ -13,7 +13,7 @@ namespace MangaScraper.UI.Core.Presentation.TabsConductor
         }
 
         //public void OpenTab() {
-        //  ActivateItem(new HelloViewModel {
+        //  ActivateItem(new MetaDataViewModel {
         //    DisplayName = "Tab "
         //  });
         //}

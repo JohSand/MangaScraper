@@ -5,9 +5,9 @@ namespace MangaScraper.UI.Core.Presentation.Hello
   /// <summary>
   /// Interaction logic for HelloView.xaml
   /// </summary>
-  public partial class HelloView : UserControl
+  public partial class MetaDataView : UserControl
   {
-    public HelloView()
+    public MetaDataView()
     {
       InitializeComponent();
     }

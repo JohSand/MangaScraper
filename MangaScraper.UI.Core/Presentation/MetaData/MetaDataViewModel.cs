@@ -11,7 +11,7 @@ using MangaScraper.UI.Core.Helpers;
 
 namespace MangaScraper.UI.Core.Presentation.Hello
 {
-    public class HelloViewModel : Screen, IPrimaryScreen
+    public class MetaDataViewModel : Screen, IPrimaryScreen
     {
         private readonly CancellationTokenSource _source = new CancellationTokenSource();
         private readonly IMetaDataService _metaDataService;
@@ -23,7 +23,7 @@ namespace MangaScraper.UI.Core.Presentation.Hello
 
         public int Order => 2;
 
-        public HelloViewModel(IMetaDataService metaDataService)
+        public MetaDataViewModel(IMetaDataService metaDataService)
         {
             _metaDataService = metaDataService;
             Providers = _metaDataService.Parsers.ToBindableCollection();
@@ -77,7 +77,7 @@ namespace MangaScraper.UI.Core.Presentation.Hello
             return Task.CompletedTask;
         }
 
-        public void Start() => Task = Task ?? _metaDataService.Start(SelectedProvider, _source.Token);
+        public void Start() => Task ??= _metaDataService.Start(SelectedProvider, _source.Token);
 
         public bool CanStart => Task is null;
 

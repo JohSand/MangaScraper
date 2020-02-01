@@ -75,11 +75,14 @@ namespace MangaScraper.Application.Services {
             async Task EventLoop() {
                 using (scheduler) {
                     while (!token.IsCancellationRequested) {
-                        var thing = await DownloadMetaData(parser, token);
+                        var metaData = await DownloadMetaData(parser, token);
                         token.ThrowIfCancellationRequested();
                         using (await _lock.LockAsync()) {
-                            await WriteToDisk(thing).ConfigureAwait(false);
+                            await WriteToDisk(metaData).ConfigureAwait(false);
                         }
+
+                        var prog = ReportProgressFactory;
+                        prog.Invoke("Waiting").Report(0);
                         await Task.Delay(600 * 1000, token);
                     }
                 }

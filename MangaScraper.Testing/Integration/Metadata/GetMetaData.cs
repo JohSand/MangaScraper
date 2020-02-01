@@ -201,6 +201,20 @@ namespace MangaScraper.Testing.Integration.Metadata {
             Assert.False(meta.Completed);
         }
 
+        [Fact]
+        public async Task TestBurakkuGakkou()
+        {
+            var url = "https://manganelo.com/manga/yydw283041580202318";
+            IMetaDataParser k = new MangaScraper.Core.Scrapers.Manga.Kakalot.SeriesParser();
+            var meta = k.GetMetaData(await Client.GetDocumentAsync(url));
+
+            Assert.Equal("Souryuu", meta.Author);
+            Assert.Equal(
+                Genre.Comedy | Genre.SchoolLife | Genre.Ecchi | Genre.Seinen 
+                , meta.Genres);
+            Assert.False(meta.Completed);
+        }
+
         //[Fact]
         //public async Task CanParseAllEden() {
         //    IMetaDataParser k = new MangaScraper.Core.Scrapers.Manga.Eden.SeriesParser();

@@ -31,30 +31,37 @@
         <StackPanel
             Grid.Row="1"
             Grid.Column="1"
-            Grid.RowSpan="3" 
-            >
+            Grid.RowSpan="3">
             <TextBlock
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Width="300"
-            x:Name="Genres" 
-                
-                TextWrapping="Wrap"
-            TextAlignment="Left"
-            Margin="10" />
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Width="300"
+                x:Name="Genres"
 
-            <TextBlock
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Width="300"
-            x:Name="Blurb"
-               
                 TextWrapping="Wrap"
-            TextAlignment="Left"
-            Margin="0,10,5,0" />
+                TextAlignment="Left"
+                Margin="10" />
+
+
+            <TextBox
+                IsReadOnly="True"
+                Height="500"
+                Cursor="Arrow"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Width="300"
+                x:Name="Blurb"
+                BorderThickness="0"
+                TextWrapping="Wrap"
+                TextAlignment="Left"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                ScrollViewer.CanContentScroll="True"
+                Margin="0,10,5,0" />
+
         </StackPanel>
 
 
-        <ContentControl x:Name="ChapterInstanceViewModel" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" />
+        <ContentControl x:Name="ChapterInstanceViewModel" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Height="800" />
     </Grid>
 </UserControl>
